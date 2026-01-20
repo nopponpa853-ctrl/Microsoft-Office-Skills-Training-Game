@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>หน้าเข้าสู่ระบบ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* --- พื้นหลัง: ใช้ไฟล์ภาพ GIF ที่ระบุ --- */
+            background: url('image/01.gif') no-repeat center center/cover;
+            
+            /* --- ตัวอย่างพื้นหลังสีม่วงที่มีดาว (ถ้าไม่มีรูปภาพ) --- */
+            /*
+            background: linear-gradient(180deg, #3a1c71 0%, #6e48aa 100%);
+            overflow: hidden; 
+            */
+        }
+
+        /* ---------------------------------------------------------------- */
+        /* สไตล์ของฟอร์ม (Glassmorphism Effect หรือ เอฟเฟกต์กระจกฝ้า) */
+        /* ---------------------------------------------------------------- */
+        .login-form {
+            background: rgba(255, 255, 255, 0.15); /* พื้นหลังโปร่งใส */
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3); /* เส้นขอบบางๆ */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* เอฟเฟกต์กระจกฝ้า! */
+            -webkit-backdrop-filter: blur(10px); 
+            padding: 50px 40px; /* <--- ปรับเพิ่ม Padding บน-ล่าง จาก 40px เป็น 50px */
+            width: 380px; 
+            color: #ffffff; 
+            text-align: center;
+        }
+
+        .login-form h2 {
+            margin-bottom: 35px; /* <--- เพิ่มระยะห่างใต้หัวข้อ */
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* ---------------------------------------------------------------- */
+        /* ช่อง Input (ช่องกรอกข้อมูล) */
+        /* ---------------------------------------------------------------- */
+        .input-group {
+            position: relative;
+            margin-bottom: 30px; /* <--- ปรับเพิ่มระยะห่างด้านล่าง จาก 25px เป็น 30px */
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px 10px 10px 5px;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #ffffff;
+            font-size: 16px;
+        }
+
+        .input-group i {
+            margin-right: 10px;
+            font-size: 18px;
+            color: #ffffff;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ---------------------------------------------------------------- */
+        /* **ลบส่วน Remember Me / Forgot Password ออกไปแล้ว** */
+        /* ---------------------------------------------------------------- */
+        /* CSS ที่เคยควบคุม .options ถูกลบออกทั้งหมด */
+
+        /* ---------------------------------------------------------------- */
+        /* ปุ่ม Login (เข้าสู่ระบบ) */
+        /* ---------------------------------------------------------------- */
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            /* เพิ่มระยะห่างด้านบน เนื่องจากลบ .options ออกไปแล้ว (ค่าเดิม 35px) */
+            margin-top: 35px; 
+            background: linear-gradient(90deg, #a770ef, #cf8bf3, #f5a8e6); 
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ---------------------------------------------------------------- */
+        /* Register Link (ลิงก์ลงทะเบียน) */
+        /* ---------------------------------------------------------------- */
+        .register-link {
+            margin-top: 25px; /* <--- ปรับเพิ่มระยะห่างด้านบน */
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #f5a8e6; 
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <form class="login-form" action="index.html" method="GET">
+            <h2>เข้าสู่ระบบ</h2>
+
+            <div class="input-group">
+                <i class="fas fa-envelope"></i> 
+                <input type="email" placeholder="อีเมล" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" placeholder="รหัสผ่าน" required>
+            </div>
+
+            <button type="submit" class="login-button">เข้าสู่ระบบ</button>
+
+            <div class="register-link">
+                ยังไม่มีบัญชีใช่หรือไม่? <a href="สมัครสมาชิก.html">ลงทะเบียน</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
