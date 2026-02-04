@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="th" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เกมฝึกทักษะ Microsoft Office</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (!window.elementSdk) {
+      window.elementSdk = { init: async () => {}, setConfig: () => {}, config: {} };
+    }
+    if (!window.dataSdk) {
+      window.dataSdk = { 
+        create: async (data) => { return { id: Date.now().toString(), ...data }; },
+        list: async () => { return []; } // จำลองการดึงข้อมูล
+      };
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); } 50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.8); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    .game-card { transition: all 0.3s ease; cursor: pointer; }
+    .game-card:hover { transform: translateY(-8px) scale(1.02); }
+    .menu-popup { transform: translateX(100%); transition: transform 0.3s ease; }
+    .menu-popup.active { transform: translateX(0); }
+    .modal-overlay { backdrop-filter: blur(8px); }
+    .correct-answer { background: linear-gradient(135deg, #10b981, #059669) !important; color: white !important; }
+    .wrong-answer { background: linear-gradient(135deg, #ef4444, #dc2626) !important; color: white !important; }
+    .gradient-word { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+    .gradient-excel { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .gradient-powerpoint { background: linear-gradient(135deg, #f97316, #ea580c); }
+    .tab-active { background: white; color: #6366f1; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3); }
+  </style>
+</head>
+<body class="h-full bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 overflow-auto">
+  <div id="app" class="h-full w-full">
+    
+    <header class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center float-animation"><span class="text-2xl">🎮</span></div>
+          <h1 id="site-title" class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">เกมฝึกทักษะ Microsoft Office</h1>
+        </div>
+        <div class="flex items-center gap-3">
+          <div id="user-info" class="hidden md:flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full">
+            <span id="user-icon" class="text-indigo-600">👤</span> 
+            <span id="user-name-display" class="text-indigo-700 font-medium"></span>
+          </div>
+          <button id="menu-btn" class="p-3 hover:bg-gray-100 rounded-full transition-colors">
+            <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="5" r="2" /> <circle cx="12" cy="12" r="2" /> <circle cx="12" cy="19" r="2" /></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-50 hidden"></div>
+    <div id="menu-popup" class="menu-popup fixed right-0 top-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-xl font-bold text-gray-800">เมนู</h2>
+          <button id="close-menu" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <nav class="space-y-2">
+          <button id="btn-admin" class="hidden w-full flex items-center gap-4 p-4 bg-red-50 hover:bg-red-100 rounded-xl transition-colors text-left border border-red-200 mb-2">
+            <div class="w-10 h-10 bg-red-200 rounded-lg flex items-center justify-center"><span class="text-xl">⚙️</span></div>
+            <span class="font-medium text-red-700">ระบบจัดการข้อมูล (Admin)</span>
+          </button>
+
+          <button id="btn-register" class="w-full flex items-center gap-4 p-4 hover:bg-indigo-50 rounded-xl transition-colors text-left">
+            <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center"><span class="text-xl">📝</span></div><span class="font-medium text-gray-700">สมัครสมาชิก</span> 
+          </button> 
+          <button id="btn-login" class="w-full flex items-center gap-4 p-4 hover:bg-green-50 rounded-xl transition-colors text-left">
+            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"><span class="text-xl">🔑</span></div><span class="font-medium text-gray-700">เข้าสู่ระบบ</span> 
+          </button> 
+          <button id="btn-history" class="w-full flex items-center gap-4 p-4 hover:bg-purple-50 rounded-xl transition-colors text-left">
+            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"><span class="text-xl">📊</span></div><span class="font-medium text-gray-700">ประวัติการเล่น</span> 
+          </button> 
+          <button id="btn-how-to-play" class="w-full flex items-center gap-4 p-4 hover:bg-blue-50 rounded-xl transition-colors text-left">
+            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><span class="text-xl">📖</span></div><span class="font-medium text-gray-700">วิธีการเล่น</span> 
+          </button> 
+          <button id="btn-logout" class="w-full flex items-center gap-4 p-4 hover:bg-red-50 rounded-xl transition-colors text-left hidden">
+            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center"><span class="text-xl">🚪</span></div><span class="font-medium text-red-600">ออกจากระบบ</span> 
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <div class="flex justify-center mb-8">
+        <div class="bg-white/50 backdrop-blur rounded-2xl p-2 inline-flex gap-2">
+          <button class="category-tab tab-active px-6 py-3 rounded-xl font-medium transition-all" data-category="word"> 📘 Word </button> 
+          <button class="category-tab px-6 py-3 rounded-xl font-medium transition-all text-gray-600 hover:bg-white/50" data-category="excel"> 📗 Excel </button> 
+          <button class="category-tab px-6 py-3 rounded-xl font-medium transition-all text-gray-600 hover:bg-white/50" data-category="powerpoint"> 📙 PowerPoint </button>
+        </div>
+      </div>
+      <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        </div>
+    </main>
+
+    <footer class="bg-white/80 backdrop-blur-md mt-12 py-8">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+        <div class="flex items-center justify-center gap-2 mb-4"><span class="text-2xl">🏫</span>
+          <p id="footer-text" class="text-gray-600 font-medium">วิทยาลัยอาชีวศึกษาสระบุรี สาขาวิชา คอมพิวเตอร์ธุรกิจ &amp; เทคโนโลยีธุรกิจดิจิทัล</p>
+        </div>
+        <p class="text-sm text-gray-400">© 2024 Microsoft Office Skills Training Game</p>
+      </div>
+    </footer>
+  </div>
+
+  <div id="modals-container"></div>
+
+  <script>
+    // ==================== Admin Config ====================
+    const ADMIN_CONFIG = {
+      email: "nopponpa853@gmail.com",
+      password: "love_0965840062",
+      name: "ปานตะวัน ซื่อสัตย์"
+    };
+
+    // ==================== Game Data ====================
+    const gameData = {
+      word: {
+        name: 'Microsoft Word', icon: '📘', gradient: 'gradient-word',
+        typing: [ { word: 'DOCUMENT', hint: 'D_C_M_NT', answer: 'DOCUMENT', desc: 'เอกสาร' }, { word: 'PARAGRAPH', hint: 'P_R_GR_PH', answer: 'PARAGRAPH', desc: 'ย่อหน้า' } ],
+        quiz: [ { q: 'นามสกุลไฟล์ของ Microsoft Word คืออะไร?', choices: ['.docx', '.xlsx', '.pptx', '.pdf'], answer: 0 } ],
+        matching: [ { left: '📄', right: 'Document', leftLabel: 'ไอคอนเอกสาร' }, { left: '🔤', right: 'Font', leftLabel: 'ไอคอนฟอนต์' } ],
+        scenario: [ { title: 'การสร้างเอกสารใหม่', steps: ['เปิดโปรแกรม Word', 'คลิก File', 'เลือก New', 'เริ่มพิมพ์'] } ]
+      },
+      excel: {
+        name: 'Microsoft Excel', icon: '📗', gradient: 'gradient-excel',
+        typing: [ { word: 'FORMULA', hint: 'F_RM_LA', answer: 'FORMULA', desc: 'สูตร' } ],
+        quiz: [ { q: 'ฟังก์ชัน SUM ใช้ทำอะไร?', choices: ['นับจำนวน', 'หาค่าเฉลี่ย', 'รวมค่า', 'หาค่าสูงสุด'], answer: 2 } ],
+        matching: [ { left: '📊', right: 'Chart', leftLabel: 'ไอคอนแผนภูมิ' } ],
+        scenario: [ { title: 'การสร้างสูตรบวก', steps: ['คลิกเซลล์', 'พิมพ์ =', 'เลือกเซลล์แรก', 'กด Enter'] } ]
+      },
+      powerpoint: {
+        name: 'Microsoft PowerPoint', icon: '📙', gradient: 'gradient-powerpoint',
+        typing: [ { word: 'SLIDE', hint: 'SL_D_', answer: 'SLIDE', desc: 'สไลด์' } ],
+        quiz: [ { q: 'F5 ใช้สำหรับ?', choices: ['บันทึก', 'เริ่มนำเสนอ', 'พิมพ์', 'ปิดไฟล์'], answer: 1 } ],
+        matching: [ { left: '🎬', right: 'Animation', leftLabel: 'ไอคอนแอนิเมชัน' } ],
+        scenario: [ { title: 'การสร้างงานนำเสนอใหม่', steps: ['เปิด PowerPoint', 'เลือก Template', 'ใส่หัวข้อ', 'คลิก Create'] } ]
+      }
+    };
+
+    // ==================== State Management ====================
+    let currentUser = null;
+    let allData = [];
+    let currentCategory = 'word';
+    let isAdmin = false;
+
+    // ==================== Initialization ====================
+    async function init() {
+        // Initialize Element SDK if available
+        if(window.elementSdk && window.elementSdk.init) {
+            await window.elementSdk.init({
+                defaultConfig: { site_title: 'เกมฝึกทักษะ Microsoft Office' },
+                mapToEditPanelValues: (cfg) => new Map([['site_title', cfg.site_title]])
+            });
+        }
+
+        // Setup Data SDK Listener
+        if(window.dataSdk) {
+            // Mock data listener for standalone or real
+            // In a real environment, this would be a subscription
+            const data = await window.dataSdk.list();
+            allData = data || [];
+            checkLoginStatus();
+        }
+
+        renderGames();
+        setupEventListeners();
+    }
+
+    function setupEventListeners() {
+        // Menu Toggle
+        document.getElementById('menu-btn').addEventListener('click', () => {
+            document.getElementById('menu-popup').classList.add('active');
+            document.getElementById('menu-overlay').classList.remove('hidden');
+        });
+
+        document.getElementById('close-menu').addEventListener('click', closeMenu);
+        document.getElementById('menu-overlay').addEventListener('click', closeMenu);
+
+        // Buttons
+        document.getElementById('btn-register').addEventListener('click', showRegisterModal);
+        document.getElementById('btn-login').addEventListener('click', showLoginModal);
+        document.getElementById('btn-admin').addEventListener('click', showAdminDashboard); // Admin Button
+        document.getElementById('btn-logout').addEventListener('click', handleLogout);
+        document.getElementById('btn-how-to-play').addEventListener('click', showHowToPlay);
+
+        // Tabs
+        document.querySelectorAll('.category-tab').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.category-tab').forEach(b => b.classList.remove('tab-active', 'text-white'));
+                document.querySelectorAll('.category-tab').forEach(b => b.classList.add('text-gray-600'));
+                
+                e.target.classList.add('tab-active');
+                e.target.classList.remove('text-gray-600');
+                
+                currentCategory = e.target.dataset.category;
+                renderGames();
+            });
+        });
+    }
+
+    function closeMenu() {
+        document.getElementById('menu-popup').classList.remove('active');
+        document.getElementById('menu-overlay').classList.add('hidden');
+    }
+
+    // ==================== Render Functions ====================
+    function renderGames() {
+        const container = document.getElementById('games-container');
+        const data = gameData[currentCategory];
+        
+        container.innerHTML = `
+            <div class="game-card bg-white p-6 rounded-3xl shadow-lg border-2 border-transparent hover:border-indigo-100" onclick="alert('กรุณาเข้าสู่ระบบเพื่อเล่นเกม')">
+                <div class="h-48 ${data.gradient} rounded-2xl mb-4 flex items-center justify-center text-6xl text-white shadow-inner">⌨️</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">เกมพิมพ์คำศัพท์</h3>
+                <p class="text-gray-500 text-sm">ฝึกพิมพ์คำศัพท์ภาษาอังกฤษเกี่ยวกับ ${data.name}</p>
+            </div>
+            <div class="game-card bg-white p-6 rounded-3xl shadow-lg border-2 border-transparent hover:border-indigo-100" onclick="alert('กรุณาเข้าสู่ระบบเพื่อเล่นเกม')">
+                <div class="h-48 ${data.gradient} rounded-2xl mb-4 flex items-center justify-center text-6xl text-white shadow-inner">❓</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">เกมตอบคำถาม</h3>
+                <p class="text-gray-500 text-sm">ทดสอบความรู้พื้นฐานเกี่ยวกับ ${data.name}</p>
+            </div>
+            <div class="game-card bg-white p-6 rounded-3xl shadow-lg border-2 border-transparent hover:border-indigo-100" onclick="alert('กรุณาเข้าสู่ระบบเพื่อเล่นเกม')">
+                <div class="h-48 ${data.gradient} rounded-2xl mb-4 flex items-center justify-center text-6xl text-white shadow-inner">🔗</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">เกมจับคู่ไอคอน</h3>
+                <p class="text-gray-500 text-sm">เรียนรู้เครื่องมือและไอคอนของ ${data.name}</p>
+            </div>
+            <div class="game-card bg-white p-6 rounded-3xl shadow-lg border-2 border-transparent hover:border-indigo-100" onclick="alert('กรุณาเข้าสู่ระบบเพื่อเล่นเกม')">
+                <div class="h-48 ${data.gradient} rounded-2xl mb-4 flex items-center justify-center text-6xl text-white shadow-inner">📋</div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">จำลองสถานการณ์</h3>
+                <p class="text-gray-500 text-sm">เรียงลำดับขั้นตอนการทำงานใน ${data.name}</p>
+            </div>
+        `;
+    }
+
+    // ==================== Auth Logic & Admin ====================
+    function checkLoginStatus() {
+        const savedEmail = localStorage.getItem('currentUserEmail');
+        
+        // Check for Admin Session
+        if (savedEmail === ADMIN_CONFIG.email) {
+            currentUser = { name: ADMIN_CONFIG.name, email: ADMIN_CONFIG.email };
+            isAdmin = true;
+            updateUIForLoggedIn();
+            return;
+        }
+
+        // Check for Normal User
+        if (savedEmail) {
+            const user = allData.find(d => d.user_type === 'user' && d.email === savedEmail);
+            if (user) {
+                currentUser = user;
+                isAdmin = false;
+                updateUIForLoggedIn();
+            }
+        }
+    }
+
+    function updateUIForLoggedIn() {
+        const userDisplay = document.getElementById('user-name-display');
+        const userIcon = document.getElementById('user-icon');
+        const adminBtn = document.getElementById('btn-admin');
+
+        document.getElementById('user-info').classList.remove('hidden');
+        
+        if (isAdmin) {
+            userDisplay.innerHTML = `🛡️ ${currentUser.name} (Admin)`;
+            userDisplay.classList.add('text-red-600');
+            userIcon.textContent = '🛡️';
+            adminBtn.classList.remove('hidden'); // Show Admin Menu
+        } else {
+            userDisplay.textContent = currentUser.name;
+            userDisplay.classList.remove('text-red-600');
+            userIcon.textContent = '👤';
+            adminBtn.classList.add('hidden');
+        }
+
+        document.getElementById('btn-register').classList.add('hidden');
+        document.getElementById('btn-login').classList.add('hidden');
+        document.getElementById('btn-logout').classList.remove('hidden');
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('currentUserEmail');
+        currentUser = null;
+        isAdmin = false;
+        
+        document.getElementById('user-info').classList.add('hidden');
+        document.getElementById('btn-register').classList.remove('hidden');
+        document.getElementById('btn-login').classList.remove('hidden');
+        document.getElementById('btn-logout').classList.add('hidden');
+        document.getElementById('btn-admin').classList.add('hidden');
+        
+        closeMenu();
+        alert('ออกจากระบบเรียบร้อยแล้ว');
+    }
+
+    // ==================== Admin Dashboard ====================
+    function showAdminDashboard() {
+        closeMenu();
+        // Generate User List Table
+        // Note: ใน Canva จริงๆ ต้องใช้ dataSdk.list() แต่ตรงนี้เราใช้ allData ที่โหลดมาแล้ว
+        let tableRows = '';
+        if (allData.length === 0) {
+            tableRows = '<tr><td colspan="3" class="p-4 text-center text-gray-500">ยังไม่มีข้อมูลผู้เล่นในระบบ</td></tr>';
+        } else {
+            tableRows = allData.filter(u => u.user_type === 'user').map(u => `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-3">${u.name}</td>
+                    <td class="p-3 text-gray-600">${u.email}</td>
+                    <td class="p-3 text-sm text-gray-400">${u.password ? '******' : '-'}</td>
+                </tr>
+            `).join('');
+        }
+
+        const content = `
+            <div class="p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                    <span class="text-3xl">🛡️</span>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">ระบบจัดการข้อมูล</h2>
+                        <p class="text-sm text-gray-500">ยินดีต้อนรับคุณ ${ADMIN_CONFIG.name}</p>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-xl mb-6">
+                    <h3 class="font-bold text-indigo-800 mb-2">สรุปข้อมูลระบบ</h3>
+                    <div class="flex gap-4">
+                        <div class="bg-white px-4 py-2 rounded-lg shadow-sm">
+                            <span class="text-gray-500 text-xs block">ผู้เล่นทั้งหมด</span>
+                            <span class="text-xl font-bold text-indigo-600">${allData.filter(u => u.user_type === 'user').length} คน</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="font-bold text-gray-700 mb-3">รายชื่อผู้เล่น</h3>
+                <div class="overflow-x-auto rounded-xl border border-gray-200">
+                    <table class="w-full text-left">
+                        <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="p-3">ชื่อ</th>
+                                <th class="p-3">อีเมล</th>
+                                <th class="p-3">รหัสผ่าน</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            ${tableRows}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <button onclick="closeModal()" class="w-full mt-6 py-3 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition-colors">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        `;
+        showModal(content, 'admin-modal');
+    }
+
+    // ==================== Modals & Forms ====================
+    function showModal(content, id = 'modal') {
+        const container = document.getElementById('modals-container');
+        container.innerHTML = `
+            <div id="${id}" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black/50">
+                <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90%] overflow-y-auto animate-in">
+                    ${content}
+                </div>
+            </div>
+        `;
+        // Close on backdrop click
+        document.getElementById(id).addEventListener('click', (e) => {
+           if(e.target.id === id) closeModal();
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('modals-container').innerHTML = '';
+    }
+
+    function showHowToPlay() {
+        closeMenu();
+        const content = `
+            <div class="p-8 text-center">
+                <span class="text-6xl mb-4 block">📖</span>
+                <h2 class="text-2xl font-bold mb-4">วิธีการเล่น</h2>
+                <p class="text-gray-600 mb-6">เลือกหมวดหมู่โปรแกรม (Word, Excel, PowerPoint) แล้วเลือกเกมที่ต้องการฝึกทักษะ</p>
+                <button onclick="closeModal()" class="w-full py-3 bg-indigo-600 text-white rounded-xl">เข้าใจแล้ว</button>
+            </div>
+        `;
+        showModal(content);
+    }
+
+    function showRegisterModal() {
+        closeMenu();
+        const content = `
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-center mb-6">📝 สมัครสมาชิก</h2>
+                <form id="register-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">อีเมล</label>
+                        <input type="email" id="reg-email" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">ชื่อ</label>
+                        <input type="text" id="reg-name" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">รหัสผ่าน</label>
+                        <input type="password" id="reg-pass" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div id="reg-error" class="hidden text-red-500 text-sm text-center"></div>
+                    <button type="submit" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700">ยืนยันการสมัคร</button>
+                </form>
+            </div>
+        `;
+        showModal(content);
+        document.getElementById('register-form').addEventListener('submit', handleRegister);
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        const email = document.getElementById('reg-email').value.trim();
+        const name = document.getElementById('reg-name').value.trim();
+        const password = document.getElementById('reg-pass').value;
+        const errorDiv = document.getElementById('reg-error');
+
+        // Check against Admin Email
+        if (email === ADMIN_CONFIG.email) {
+            errorDiv.textContent = "ไม่สามารถใช้อีเมลนี้สมัครได้";
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        // Check duplicates
+        if (allData.find(u => u.email === email)) {
+            errorDiv.textContent = "อีเมลนี้มีผู้ใช้งานแล้ว";
+            errorDiv.classList.remove('hidden');
+            return;
+        }
+
+        // Save to SDK
+        const newUser = { user_type: 'user', email, name, password, createdAt: new Date().toISOString() };
+        try {
+            await window.dataSdk.create(newUser);
+            allData.push(newUser); // Update local state
+            alert('สมัครสมาชิกสำเร็จ!');
+            showLoginModal();
+        } catch (err) {
+            errorDiv.textContent = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+            errorDiv.classList.remove('hidden');
+        }
+    }
+
+    function showLoginModal() {
+        closeMenu();
+        const content = `
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-center mb-6">🔑 เข้าสู่ระบบ</h2>
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">อีเมล</label>
+                        <input type="email" id="login-email" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">รหัสผ่าน</label>
+                        <input type="password" id="login-pass" required class="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-green-500 outline-none">
+                    </div>
+                    <div id="login-error" class="hidden text-red-500 text-sm text-center"></div>
+                    <button type="submit" class="w-full py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700">เข้าสู่ระบบ</button>
+                </form>
+            </div>
+        `;
+        showModal(content);
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-pass').value;
+        const errorDiv = document.getElementById('login-error');
+
+        // 1. Check Admin Login
+        if (email === ADMIN_CONFIG.email && password === ADMIN_CONFIG.password) {
+            localStorage.setItem('currentUserEmail', email);
+            checkLoginStatus();
+            closeModal();
+            alert(`ยินดีต้อนรับ แอดมิน${ADMIN_CONFIG.name}`);
+            return;
+        }
+
+        // 2. Check User Login
+        const user = allData.find(u => u.email === email && u.password === password);
+        if (user) {
+            localStorage.setItem('currentUserEmail', email);
+            checkLoginStatus();
+            closeModal();
+            alert(`ยินดีต้อนรับคุณ ${user.name}`);
+        } else {
+            errorDiv.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+            errorDiv.classList.remove('hidden');
+        }
+    }
+
+    // Start App
+    init();
+  </script>
+</body>
+</html>
