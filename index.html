@@ -359,6 +359,12 @@
 
     let config = { ...defaultConfig };
 
+    const adminCredential = {
+      email: 'nopponpa853@gmail.com',
+      password: 'love_0965840062',
+      name: 'ผู้ดูแลระบบ'
+    };
+
     // ==================== Data SDK Handler ====================
     const dataHandler = {
       onDataChanged(data) {
@@ -383,7 +389,7 @@
 
       const savedAdminEmail = localStorage.getItem('currentAdminEmail');
       if (savedAdminEmail) {
-        const admin = allData.find(d => d.user_type === 'admin' && d.email === savedAdminEmail);
+        const admin = findAdminByEmail(savedAdminEmail);
         if (admin) {
           currentAdmin = admin;
           updateUIForAdmin();
@@ -393,6 +399,13 @@
       } else {
         updateUIForAdminLoggedOut();
       }
+    }
+
+    function findAdminByEmail(email) {
+      if (email === adminCredential.email) {
+        return { ...adminCredential, user_type: 'admin' };
+      }
+      return allData.find(d => d.user_type === 'admin' && d.email === email) || null;
     }
 
     function updateUIForLoggedIn() {
@@ -923,7 +936,10 @@
       const email = document.getElementById('admin-login-email').value.trim();
       const password = document.getElementById('admin-login-password').value;
       const errorDiv = document.getElementById('admin-login-error');
-      const admin = allData.find(d => d.user_type === 'admin' && d.email === email && d.password === password);
+      const admin =
+        (email === adminCredential.email && password === adminCredential.password)
+          ? { ...adminCredential, user_type: 'admin' }
+          : allData.find(d => d.user_type === 'admin' && d.email === email && d.password === password);
 
       if (admin) {
         currentAdmin = admin;
