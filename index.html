@@ -157,7 +157,15 @@
        </div><span class="font-medium text-gray-700">ผู้พัฒนาเกม</span> </button> <button id="btn-logout" class="w-full flex items-center gap-4 p-4 hover:bg-red-50 rounded-xl transition-colors text-left hidden">
        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center"><span class="text-xl">🚪</span>
        </div><span class="font-medium text-red-600">ออกจากระบบ</span> </button>
-     </nav>
+      <button id="btn-admin-login" class="w-full flex items-center gap-4 p-4 hover:bg-slate-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center"><span class="text-xl">🛡️</span>
+       </div><span class="font-medium text-gray-700">เข้าสู่ระบบแอดมิน</span>
+      </button>
+      <button id="btn-admin-panel" class="w-full flex items-center gap-4 p-4 hover:bg-amber-50 rounded-xl transition-colors text-left hidden">
+       <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center"><span class="text-xl">🧭</span>
+       </div><span class="font-medium text-amber-700">แผงควบคุมแอดมิน</span>
+      </button>
+    </nav>
     </div>
    </div><!-- Main Content -->
    <main class="max-w-7xl mx-auto px-4 py-8"><!-- Category Tabs -->
@@ -332,6 +340,7 @@
 
     // ==================== State Management ====================
     let currentUser = null;
+    let currentAdmin = null;
     let allData = [];
     let currentCategory = 'word';
     let currentGame = null;
@@ -365,7 +374,24 @@
         if (user) {
           currentUser = user;
           updateUIForLoggedIn();
+        } else {
+          updateUIForLoggedOut();
         }
+      } else {
+        updateUIForLoggedOut();
+      }
+
+      const savedAdminEmail = localStorage.getItem('currentAdminEmail');
+      if (savedAdminEmail) {
+        const admin = allData.find(d => d.user_type === 'admin' && d.email === savedAdminEmail);
+        if (admin) {
+          currentAdmin = admin;
+          updateUIForAdmin();
+        } else {
+          updateUIForAdminLoggedOut();
+        }
+      } else {
+        updateUIForAdminLoggedOut();
       }
     }
 
@@ -385,6 +411,19 @@
       document.getElementById('btn-login').classList.remove('hidden');
       document.getElementById('btn-logout').classList.add('hidden');
       currentUser = null;
+    }
+
+    function updateUIForAdmin() {
+      if (currentAdmin) {
+        document.getElementById('btn-admin-login').classList.add('hidden');
+        document.getElementById('btn-admin-panel').classList.remove('hidden');
+      }
+    }
+
+    function updateUIForAdminLoggedOut() {
+      document.getElementById('btn-admin-login').classList.remove('hidden');
+      document.getElementById('btn-admin-panel').classList.add('hidden');
+      currentAdmin = null;
     }
 
     // ==================== Element SDK ====================
@@ -706,6 +745,13 @@
       showToast('ออกจากระบบเรียบร้อย', 'info');
     }
 
+    function handleAdminLogout() {
+      localStorage.removeItem('currentAdminEmail');
+      updateUIForAdminLoggedOut();
+      closeMenu();
+      showToast('ออกจากระบบแอดมินเรียบร้อย', 'info');
+    }
+
     // ==================== History Modal ====================
     function showHistoryModal() {
       closeMenu();
@@ -827,6 +873,172 @@
         </div>
       `;
       showModal(content, 'developer-modal');
+    }
+
+    // ==================== Admin Modals ====================
+    function showAdminLoginModal() {
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <span class="text-5xl mb-3 block">🛡️</span>
+            <h2 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบแอดมิน</h2>
+            <p class="text-sm text-gray-500 mt-2">สำหรับผู้ดูแลระบบเท่านั้น</p>
+          </div>
+
+          <form id="admin-login-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">อีเมลแอดมิน</label>
+              <input type="email" id="admin-login-email" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="admin@email.com">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่าน</label>
+              <input type="password" id="admin-login-password" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="••••••••">
+            </div>
+
+            <div id="admin-login-error" class="hidden text-red-500 text-sm text-center p-3 bg-red-50 rounded-xl"></div>
+            
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-slate-700 to-slate-900 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              เข้าสู่ระบบแอดมิน
+            </button>
+          </form>
+          
+          <button onclick="closeModal()" class="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ยกเลิก
+          </button>
+        </div>
+      `;
+      showModal(content, 'admin-login-modal');
+      closeMenu();
+
+      document.getElementById('admin-login-form').addEventListener('submit', handleAdminLogin);
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-login-email').value.trim();
+      const password = document.getElementById('admin-login-password').value;
+      const errorDiv = document.getElementById('admin-login-error');
+      const admin = allData.find(d => d.user_type === 'admin' && d.email === email && d.password === password);
+
+      if (admin) {
+        currentAdmin = admin;
+        localStorage.setItem('currentAdminEmail', email);
+        updateUIForAdmin();
+        closeModal();
+        showToast('เข้าสู่ระบบแอดมินสำเร็จ! ✅', 'success');
+      } else {
+        errorDiv.textContent = 'อีเมลหรือรหัสผ่านแอดมินไม่ถูกต้อง';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    function showAdminPanel() {
+      closeMenu();
+
+      if (!currentAdmin) {
+        showToast('กรุณาเข้าสู่ระบบแอดมินก่อน', 'warning');
+        showAdminLoginModal();
+        return;
+      }
+
+      const users = allData.filter(d => d.user_type === 'user');
+      const history = allData.filter(d => d.user_type === 'history');
+      const lastPlays = history
+        .slice()
+        .sort((a, b) => new Date(b.played_at) - new Date(a.played_at))
+        .slice(0, 5);
+
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">แผงควบคุมแอดมิน</h2>
+              <p class="text-sm text-gray-500">ผู้ดูแล: ${currentAdmin.name}</p>
+            </div>
+            <button onclick="handleAdminLogout()" class="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors">
+              ออกจากระบบแอดมิน
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100">
+              <p class="text-sm text-indigo-600">จำนวนผู้เล่น</p>
+              <p class="text-3xl font-bold text-indigo-800">${users.length}</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100">
+              <p class="text-sm text-emerald-600">ประวัติการเล่นทั้งหมด</p>
+              <p class="text-3xl font-bold text-emerald-800">${history.length}</p>
+            </div>
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100">
+              <p class="text-sm text-amber-600">สถานะระบบ</p>
+              <p class="text-xl font-bold text-amber-800">${allData.length}/999 เรคคอร์ด</p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3">รายชื่อผู้เล่น</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-slate-100 text-slate-700">
+                    <th class="px-4 py-2 text-left rounded-tl-xl">ชื่อ</th>
+                    <th class="px-4 py-2 text-left">อีเมล</th>
+                    <th class="px-4 py-2 text-center rounded-tr-xl">จำนวนครั้งที่เล่น</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  ${users.map(user => {
+                    const playCount = history.filter(h => h.email === user.email).length;
+                    return `
+                      <tr class="hover:bg-gray-50">
+                        <td class="px-4 py-2">${user.name}</td>
+                        <td class="px-4 py-2 text-gray-500">${user.email}</td>
+                        <td class="px-4 py-2 text-center font-medium">${playCount}</td>
+                      </tr>
+                    `;
+                  }).join('') || `
+                    <tr>
+                      <td colspan="3" class="px-4 py-4 text-center text-gray-400">ยังไม่มีผู้เล่น</td>
+                    </tr>
+                  `}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-3">การเล่นล่าสุด</h3>
+            <div class="space-y-3">
+              ${lastPlays.map(play => `
+                <div class="p-4 rounded-2xl bg-gray-50 flex items-center justify-between">
+                  <div>
+                    <p class="font-medium text-gray-800">${play.name}</p>
+                    <p class="text-sm text-gray-500">${play.game_name} · ${play.level}</p>
+                  </div>
+                  <div class="text-right">
+                    <p class="font-bold text-indigo-600">${play.score}</p>
+                    <p class="text-xs text-gray-400">${play.played_at}</p>
+                  </div>
+                </div>
+              `).join('') || `
+                <div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400">
+                  ยังไม่มีประวัติการเล่น
+                </div>
+              `}
+            </div>
+          </div>
+
+          <button onclick="closeModal()" class="w-full mt-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+            ปิด
+          </button>
+        </div>
+      `;
+      showModal(content, 'admin-panel-modal');
     }
 
     // ==================== Toast Notification ====================
@@ -1417,6 +1629,8 @@
       document.getElementById('btn-how-to-play').addEventListener('click', showHowToPlay);
       document.getElementById('btn-developer').addEventListener('click', showDeveloperModal);
       document.getElementById('btn-logout').addEventListener('click', handleLogout);
+      document.getElementById('btn-admin-login').addEventListener('click', showAdminLoginModal);
+      document.getElementById('btn-admin-panel').addEventListener('click', showAdminPanel);
       
       // Category tabs
       document.querySelectorAll('.category-tab').forEach(tab => {
