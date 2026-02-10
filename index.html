@@ -1,0 +1,1938 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เกมฝึกทักษะ Microsoft Office</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.8); }
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    @keyframes confetti {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+    }
+    
+    .float-animation {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .pulse-glow {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    
+    .shake {
+      animation: shake 0.5s ease-in-out;
+    }
+    
+    .game-card {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    
+    .menu-popup {
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .menu-popup.active {
+      transform: translateX(0);
+    }
+    
+    .modal-overlay {
+      backdrop-filter: blur(8px);
+    }
+    
+    .dragging {
+      opacity: 0.5;
+      transform: scale(1.05);
+    }
+    
+    .drag-over {
+      border-color: #6366f1 !important;
+      background-color: rgba(99, 102, 241, 0.1);
+    }
+    
+    .correct-answer {
+      background: linear-gradient(135deg, #10b981, #059669) !important;
+      color: white !important;
+    }
+    
+    .wrong-answer {
+      background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+      color: white !important;
+    }
+    
+    .matching-selected {
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+    }
+    
+    .matching-matched {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .gradient-word {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+    
+    .gradient-excel {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+    
+    .gradient-powerpoint {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+    }
+    
+    .tab-active {
+      background: white;
+      color: #6366f1;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 overflow-auto">
+  <div id="app" class="h-full w-full"><!-- Header -->
+   <header class="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center float-animation"><span class="text-2xl">🎮</span>
+      </div>
+      <h1 id="site-title" class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">เกมฝึกทักษะ Microsoft Office</h1>
+     </div>
+     <div class="flex items-center gap-3">
+      <div id="user-info" class="hidden md:flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full"><span class="text-indigo-600">👤</span> <span id="user-name-display" class="text-indigo-700 font-medium"></span>
+      </div><button id="menu-btn" class="p-3 hover:bg-gray-100 rounded-full transition-colors">
+       <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="5" r="2" /> <circle cx="12" cy="12" r="2" /> <circle cx="12" cy="19" r="2" />
+       </svg></button>
+     </div>
+    </div>
+   </header><!-- Menu Popup -->
+   <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-50 hidden"></div>
+   <div id="menu-popup" class="menu-popup fixed right-0 top-0 h-full w-80 bg-white shadow-2xl z-50 overflow-y-auto">
+    <div class="p-6">
+     <div class="flex items-center justify-between mb-8">
+      <h2 class="text-xl font-bold text-gray-800">เมนู</h2><button id="close-menu" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <nav class="space-y-2"><button id="btn-register" class="w-full flex items-center gap-4 p-4 hover:bg-indigo-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center"><span class="text-xl">📝</span>
+       </div><span class="font-medium text-gray-700">สมัครสมาชิก</span> </button> <button id="btn-login" class="w-full flex items-center gap-4 p-4 hover:bg-green-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"><span class="text-xl">🔑</span>
+       </div><span class="font-medium text-gray-700">เข้าสู่ระบบ</span> </button> <button id="btn-history" class="w-full flex items-center gap-4 p-4 hover:bg-purple-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center"><span class="text-xl">📊</span>
+       </div><span class="font-medium text-gray-700">ประวัติการเล่น</span> </button> <button id="btn-how-to-play" class="w-full flex items-center gap-4 p-4 hover:bg-blue-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><span class="text-xl">📖</span>
+       </div><span class="font-medium text-gray-700">วิธีการเล่น</span> </button> <button id="btn-developer" class="w-full flex items-center gap-4 p-4 hover:bg-pink-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center"><span class="text-xl">👩‍💻</span>
+       </div><span class="font-medium text-gray-700">ผู้พัฒนาเกม</span> </button> <button id="btn-logout" class="w-full flex items-center gap-4 p-4 hover:bg-red-50 rounded-xl transition-colors text-left hidden">
+       <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center"><span class="text-xl">🚪</span>
+       </div><span class="font-medium text-red-600">ออกจากระบบ</span> </button>
+      <button id="btn-admin-login" class="w-full flex items-center gap-4 p-4 hover:bg-slate-50 rounded-xl transition-colors text-left">
+       <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center"><span class="text-xl">🛡️</span>
+       </div><span class="font-medium text-gray-700">เข้าสู่ระบบแอดมิน</span>
+      </button>
+      <button id="btn-admin-panel" class="w-full flex items-center gap-4 p-4 hover:bg-amber-50 rounded-xl transition-colors text-left hidden">
+       <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center"><span class="text-xl">🧭</span>
+       </div><span class="font-medium text-amber-700">แผงควบคุมแอดมิน</span>
+      </button>
+     </nav>
+    </div>
+   </div><!-- Main Content -->
+   <main class="max-w-7xl mx-auto px-4 py-8"><!-- Category Tabs -->
+    <div class="flex justify-center mb-8">
+     <div class="bg-white/50 backdrop-blur rounded-2xl p-2 inline-flex gap-2"><button class="category-tab tab-active px-6 py-3 rounded-xl font-medium transition-all" data-category="word"> 📘 Word </button> <button class="category-tab px-6 py-3 rounded-xl font-medium transition-all text-gray-600 hover:bg-white/50" data-category="excel"> 📗 Excel </button> <button class="category-tab px-6 py-3 rounded-xl font-medium transition-all text-gray-600 hover:bg-white/50" data-category="powerpoint"> 📙 PowerPoint </button>
+     </div>
+    </div><!-- Games Grid -->
+    <div id="games-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"><!-- Game cards will be rendered here -->
+    </div>
+   </main><!-- Footer -->
+   <footer class="bg-white/80 backdrop-blur-md mt-12 py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+     <div class="flex items-center justify-center gap-2 mb-4"><span class="text-2xl">🏫</span>
+      <p id="footer-text" class="text-gray-600 font-medium">วิทยาลัยอาชีวศึกษาสระบุรี สาขาวิชา คอมพิวเตอร์ธุรกิจ &amp; เทคโนโลยีธุรกิจดิจิทัล</p>
+     </div>
+     <p class="text-sm text-gray-400">© 2024 Microsoft Office Skills Training Game</p>
+    </div>
+   </footer>
+  </div><!-- Modals Container -->
+  <div id="modals-container"></div>
+  <script>
+    // ==================== Game Data ====================
+    const gameData = {
+      word: {
+        name: 'Microsoft Word',
+        icon: '📘',
+        gradient: 'gradient-word',
+        typing: [
+          { word: 'DOCUMENT', hint: 'D_C_M_NT', answer: 'DOCUMENT', desc: 'เอกสาร' },
+          { word: 'PARAGRAPH', hint: 'P_R_GR_PH', answer: 'PARAGRAPH', desc: 'ย่อหน้า' },
+          { word: 'FONT', hint: 'F_NT', answer: 'FONT', desc: 'แบบอักษร' },
+          { word: 'MARGIN', hint: 'M_RG_N', answer: 'MARGIN', desc: 'ระยะขอบ' },
+          { word: 'HEADER', hint: 'H_ _D_R', answer: 'HEADER', desc: 'หัวกระดาษ' },
+          { word: 'FOOTER', hint: 'F_ _T_R', answer: 'FOOTER', desc: 'ท้ายกระดาษ' },
+          { word: 'TABLE', hint: 'T_BL_', answer: 'TABLE', desc: 'ตาราง' },
+          { word: 'BULLET', hint: 'B_LL_T', answer: 'BULLET', desc: 'สัญลักษณ์หน้าข้อความ' },
+          { word: 'INDENT', hint: '_ND_NT', answer: 'INDENT', desc: 'การเยื้อง' },
+          { word: 'SPELLING', hint: 'SP_LL_NG', answer: 'SPELLING', desc: 'การสะกดคำ' }
+        ],
+        quiz: [
+          { q: 'นามสกุลไฟล์ของ Microsoft Word คืออะไร?', choices: ['.docx', '.xlsx', '.pptx', '.pdf'], answer: 0 },
+          { q: 'ปุ่มลัด Ctrl+B ใช้ทำอะไร?', choices: ['ขีดเส้นใต้', 'ตัวหนา', 'ตัวเอียง', 'คัดลอก'], answer: 1 },
+          { q: 'เมนูใดใช้สำหรับตั้งค่าขนาดกระดาษ?', choices: ['Home', 'Insert', 'Layout', 'View'], answer: 2 },
+          { q: 'Ctrl+S ใช้สำหรับ?', choices: ['เลือกทั้งหมด', 'บันทึก', 'ค้นหา', 'พิมพ์'], answer: 1 },
+          { q: 'การทำ Mail Merge ใช้สำหรับ?', choices: ['รวมไฟล์', 'จดหมายเวียน', 'ส่งอีเมล', 'แก้ไขตาราง'], answer: 1 },
+          { q: 'Tab ใดใช้แทรกรูปภาพ?', choices: ['Home', 'Insert', 'Design', 'References'], answer: 1 },
+          { q: 'Ctrl+Z ทำหน้าที่อะไร?', choices: ['ทำซ้ำ', 'ย้อนกลับ', 'ปิดไฟล์', 'เปิดไฟล์ใหม่'], answer: 1 },
+          { q: 'Word Art คืออะไร?', choices: ['รูปภาพ', 'ตาราง', 'ข้อความศิลป์', 'กราฟ'], answer: 2 },
+          { q: 'Page Break ใช้สำหรับ?', choices: ['แบ่งหน้า', 'แบ่งคอลัมน์', 'แบ่งย่อหน้า', 'แบ่งส่วน'], answer: 0 },
+          { q: 'Track Changes ใช้ทำอะไร?', choices: ['ติดตามการเปลี่ยนแปลง', 'เปลี่ยนสี', 'เปลี่ยนฟอนต์', 'เปลี่ยนขนาด'], answer: 0 }
+        ],
+        matching: [
+          { left: '📄', right: 'Document', leftLabel: 'ไอคอนเอกสาร' },
+          { left: '🔤', right: 'Font', leftLabel: 'ไอคอนฟอนต์' },
+          { left: '📋', right: 'Clipboard', leftLabel: 'ไอคอนคลิปบอร์ด' },
+          { left: '🖨️', right: 'Print', leftLabel: 'ไอคอนพิมพ์' },
+          { left: '💾', right: 'Save', leftLabel: 'ไอคอนบันทึก' },
+          { left: '📝', right: 'Edit', leftLabel: 'ไอคอนแก้ไข' }
+        ],
+        scenario: [
+          { title: 'การสร้างเอกสารใหม่', steps: ['เปิดโปรแกรม Word', 'คลิก File', 'เลือก New', 'เริ่มพิมพ์'] },
+          { title: 'การบันทึกไฟล์', steps: ['คลิก File', 'เลือก Save As', 'ตั้งชื่อไฟล์', 'คลิก Save'] },
+          { title: 'การจัดรูปแบบข้อความ', steps: ['เลือกข้อความ', 'คลิก Home', 'เลือก Font', 'ปรับแต่งข้อความ'] },
+          { title: 'การแทรกรูปภาพ', steps: ['คลิก Insert', 'เลือก Pictures', 'เลือกไฟล์รูป', 'คลิก Insert'] },
+          { title: 'การสร้างตาราง', steps: ['คลิก Insert', 'เลือก Table', 'กำหนดขนาด', 'คลิก OK'] },
+          { title: 'การตั้งค่าหน้ากระดาษ', steps: ['คลิก Layout', 'เลือก Size', 'เลือก Margins', 'คลิก OK'] },
+          { title: 'การพิมพ์เอกสาร', steps: ['คลิก File', 'เลือก Print', 'ตั้งค่าเครื่องพิมพ์', 'คลิก Print'] },
+          { title: 'การตรวจสอบการสะกดคำ', steps: ['คลิก Review', 'เลือก Spelling', 'ตรวจสอบข้อผิดพลาด', 'แก้ไขคำ'] },
+          { title: 'การทำ Header/Footer', steps: ['คลิก Insert', 'เลือก Header', 'ใส่ข้อความ', 'คลิก Close'] },
+          { title: 'การส่งออกเป็น PDF', steps: ['คลิก File', 'เลือก Export', 'เลือก PDF', 'คลิก Publish'] }
+        ]
+      },
+      excel: {
+        name: 'Microsoft Excel',
+        icon: '📗',
+        gradient: 'gradient-excel',
+        typing: [
+          { word: 'CELL', hint: 'C_LL', answer: 'CELL', desc: 'เซลล์' },
+          { word: 'FORMULA', hint: 'F_RM_LA', answer: 'FORMULA', desc: 'สูตร' },
+          { word: 'WORKSHEET', hint: 'W_RKS_ _ET', answer: 'WORKSHEET', desc: 'แผ่นงาน' },
+          { word: 'CHART', hint: 'CH_RT', answer: 'CHART', desc: 'แผนภูมิ' },
+          { word: 'FILTER', hint: 'F_LT_R', answer: 'FILTER', desc: 'ตัวกรอง' },
+          { word: 'PIVOT', hint: 'P_V_T', answer: 'PIVOT', desc: 'ตารางสรุป' },
+          { word: 'COLUMN', hint: 'C_L_MN', answer: 'COLUMN', desc: 'คอลัมน์' },
+          { word: 'ROW', hint: 'R_W', answer: 'ROW', desc: 'แถว' },
+          { word: 'FUNCTION', hint: 'F_NCT_ _N', answer: 'FUNCTION', desc: 'ฟังก์ชัน' },
+          { word: 'RANGE', hint: 'R_NG_', answer: 'RANGE', desc: 'ช่วงข้อมูล' }
+        ],
+        quiz: [
+          { q: 'นามสกุลไฟล์ของ Excel คือ?', choices: ['.docx', '.xlsx', '.pptx', '.txt'], answer: 1 },
+          { q: 'ฟังก์ชัน SUM ใช้ทำอะไร?', choices: ['นับจำนวน', 'หาค่าเฉลี่ย', 'รวมค่า', 'หาค่าสูงสุด'], answer: 2 },
+          { q: 'เซลล์ A1 หมายถึง?', choices: ['แถว A คอลัมน์ 1', 'คอลัมน์ A แถว 1', 'หน้า A ข้อ 1', 'ไฟล์ A เอกสาร 1'], answer: 1 },
+          { q: 'ฟังก์ชัน AVERAGE ใช้หา?', choices: ['ค่าต่ำสุด', 'ค่าสูงสุด', 'ค่าเฉลี่ย', 'จำนวนทั้งหมด'], answer: 2 },
+          { q: 'Freeze Panes ใช้ทำอะไร?', choices: ['ล็อคแถว/คอลัมน์', 'ซ่อนข้อมูล', 'ลบข้อมูล', 'เรียงข้อมูล'], answer: 0 },
+          { q: 'ฟังก์ชัน COUNT นับอะไร?', choices: ['ตัวอักษร', 'ตัวเลข', 'สูตร', 'แผ่นงาน'], answer: 1 },
+          { q: 'Conditional Formatting คือ?', choices: ['การจัดรูปแบบตามเงื่อนไข', 'การจัดเรียง', 'การกรอง', 'การรวมเซลล์'], answer: 0 },
+          { q: 'ฟังก์ชัน MAX หาค่าอะไร?', choices: ['ค่าน้อยสุด', 'ค่ามากสุด', 'ค่าเฉลี่ย', 'ค่ารวม'], answer: 1 },
+          { q: 'VLOOKUP ใช้สำหรับ?', choices: ['ค้นหาแนวตั้ง', 'ค้นหาแนวนอน', 'จัดเรียง', 'กรองข้อมูล'], answer: 0 },
+          { q: 'Workbook คืออะไร?', choices: ['แผ่นงาน', 'สมุดงาน/ไฟล์', 'เซลล์', 'แถว'], answer: 1 }
+        ],
+        matching: [
+          { left: '📊', right: 'Chart', leftLabel: 'ไอคอนแผนภูมิ' },
+          { left: '🔢', right: 'Number', leftLabel: 'ไอคอนตัวเลข' },
+          { left: '📈', right: 'Graph', leftLabel: 'ไอคอนกราฟ' },
+          { left: '🧮', right: 'Calculate', leftLabel: 'ไอคอนคำนวณ' },
+          { left: '📉', right: 'Trend', leftLabel: 'ไอคอนแนวโน้ม' },
+          { left: '🗃️', right: 'Data', leftLabel: 'ไอคอนข้อมูล' }
+        ],
+        scenario: [
+          { title: 'การสร้างสูตรบวก', steps: ['คลิกเซลล์', 'พิมพ์ =', 'เลือกเซลล์แรก', 'กด Enter'] },
+          { title: 'การใช้ฟังก์ชัน SUM', steps: ['คลิกเซลล์', 'พิมพ์ =SUM(', 'เลือกช่วงข้อมูล', 'ปิดวงเล็บและ Enter'] },
+          { title: 'การสร้างแผนภูมิ', steps: ['เลือกข้อมูล', 'คลิก Insert', 'เลือก Chart', 'เลือกประเภทกราฟ'] },
+          { title: 'การใช้ AutoFill', steps: ['พิมพ์ข้อมูล', 'คลิกเซลล์', 'ลากจุดมุมล่างขวา', 'ปล่อยเมาส์'] },
+          { title: 'การกรองข้อมูล', steps: ['เลือกหัวตาราง', 'คลิก Data', 'คลิก Filter', 'เลือกเงื่อนไข'] },
+          { title: 'การจัดเรียงข้อมูล', steps: ['เลือกข้อมูล', 'คลิก Data', 'เลือก Sort', 'กำหนดเงื่อนไข'] },
+          { title: 'การใช้ VLOOKUP', steps: ['พิมพ์ =VLOOKUP(', 'ใส่ค่าค้นหา', 'ใส่ช่วงตาราง', 'ปิดวงเล็บ'] },
+          { title: 'การ Freeze Panes', steps: ['เลือกเซลล์', 'คลิก View', 'เลือก Freeze Panes', 'เลือกตัวเลือก'] },
+          { title: 'การจัดรูปแบบตามเงื่อนไข', steps: ['เลือกข้อมูล', 'คลิก Home', 'คลิก Conditional Formatting', 'เลือกกฎ'] },
+          { title: 'การสร้าง Pivot Table', steps: ['เลือกข้อมูล', 'คลิก Insert', 'คลิก PivotTable', 'คลิก OK'] }
+        ]
+      },
+      powerpoint: {
+        name: 'Microsoft PowerPoint',
+        icon: '📙',
+        gradient: 'gradient-powerpoint',
+        typing: [
+          { word: 'SLIDE', hint: 'SL_D_', answer: 'SLIDE', desc: 'สไลด์' },
+          { word: 'ANIMATION', hint: 'AN_M_T_ _N', answer: 'ANIMATION', desc: 'ภาพเคลื่อนไหว' },
+          { word: 'TRANSITION', hint: 'TR_NS_T_ _N', answer: 'TRANSITION', desc: 'การเปลี่ยนสไลด์' },
+          { word: 'TEMPLATE', hint: 'T_MPL_T_', answer: 'TEMPLATE', desc: 'แม่แบบ' },
+          { word: 'LAYOUT', hint: 'L_Y_ _T', answer: 'LAYOUT', desc: 'เค้าโครง' },
+          { word: 'PRESENTER', hint: 'PR_S_NT_R', answer: 'PRESENTER', desc: 'ผู้นำเสนอ' },
+          { word: 'DESIGN', hint: 'D_S_GN', answer: 'DESIGN', desc: 'การออกแบบ' },
+          { word: 'MASTER', hint: 'M_ST_R', answer: 'MASTER', desc: 'ต้นแบบ' },
+          { word: 'SLIDESHOW', hint: 'SL_D_SH_W', answer: 'SLIDESHOW', desc: 'การนำเสนอ' },
+          { word: 'THEME', hint: 'TH_M_', answer: 'THEME', desc: 'ธีม' }
+        ],
+        quiz: [
+          { q: 'นามสกุลไฟล์ PowerPoint คือ?', choices: ['.docx', '.xlsx', '.pptx', '.pdf'], answer: 2 },
+          { q: 'F5 ใช้สำหรับ?', choices: ['บันทึก', 'เริ่มนำเสนอ', 'พิมพ์', 'ปิดไฟล์'], answer: 1 },
+          { q: 'Transition คืออะไร?', choices: ['ภาพเคลื่อนไหวของวัตถุ', 'การเปลี่ยนสไลด์', 'การเปลี่ยนสี', 'การเปลี่ยนฟอนต์'], answer: 1 },
+          { q: 'Animation ใช้กับอะไร?', choices: ['สไลด์', 'วัตถุในสไลด์', 'ไฟล์', 'โปรแกรม'], answer: 1 },
+          { q: 'Slide Master คืออะไร?', choices: ['สไลด์แรก', 'สไลด์สุดท้าย', 'ต้นแบบสไลด์', 'สไลด์ว่าง'], answer: 2 },
+          { q: 'Tab ใดใช้ใส่ Animation?', choices: ['Home', 'Insert', 'Animations', 'Design'], answer: 2 },
+          { q: 'Presenter View แสดงอะไร?', choices: ['โน้ตผู้บรรยาย', 'สไลด์เท่านั้น', 'เมนูเท่านั้น', 'ไม่แสดงอะไร'], answer: 0 },
+          { q: 'Smart Art ใช้สร้างอะไร?', choices: ['ตาราง', 'ผังภาพ', 'กราฟ', 'ข้อความ'], answer: 1 },
+          { q: 'Esc ใช้ทำอะไรขณะนำเสนอ?', choices: ['ข้ามสไลด์', 'หยุดนำเสนอ', 'ย้อนกลับ', 'ซูมเข้า'], answer: 1 },
+          { q: 'Notes ใน PowerPoint คืออะไร?', choices: ['หมายเหตุ/โน้ต', 'เสียง', 'วิดีโอ', 'รูปภาพ'], answer: 0 }
+        ],
+        matching: [
+          { left: '🎬', right: 'Animation', leftLabel: 'ไอคอนแอนิเมชัน' },
+          { left: '🖼️', right: 'Slide', leftLabel: 'ไอคอนสไลด์' },
+          { left: '🎨', right: 'Design', leftLabel: 'ไอคอนออกแบบ' },
+          { left: '▶️', right: 'Play', leftLabel: 'ไอคอนเล่น' },
+          { left: '🔄', right: 'Transition', leftLabel: 'ไอคอนเปลี่ยนสไลด์' },
+          { left: '🎤', right: 'Presentation', leftLabel: 'ไอคอนนำเสนอ' }
+        ],
+        scenario: [
+          { title: 'การสร้างงานนำเสนอใหม่', steps: ['เปิด PowerPoint', 'เลือก Template', 'ใส่หัวข้อ', 'คลิก Create'] },
+          { title: 'การเพิ่มสไลด์ใหม่', steps: ['คลิก Home', 'เลือก New Slide', 'เลือก Layout', 'ใส่เนื้อหา'] },
+          { title: 'การใส่รูปภาพ', steps: ['คลิก Insert', 'เลือก Pictures', 'เลือกไฟล์', 'คลิก Insert'] },
+          { title: 'การใส่ Animation', steps: ['เลือกวัตถุ', 'คลิก Animations', 'เลือกเอฟเฟกต์', 'ปรับ Timing'] },
+          { title: 'การใส่ Transition', steps: ['เลือกสไลด์', 'คลิก Transitions', 'เลือกเอฟเฟกต์', 'ตั้งเวลา'] },
+          { title: 'การใส่ Smart Art', steps: ['คลิก Insert', 'เลือก SmartArt', 'เลือกประเภท', 'ใส่ข้อความ'] },
+          { title: 'การใช้ Slide Master', steps: ['คลิก View', 'เลือก Slide Master', 'แก้ไขต้นแบบ', 'คลิก Close'] },
+          { title: 'การบันทึกงานนำเสนอ', steps: ['คลิก File', 'เลือก Save As', 'ตั้งชื่อไฟล์', 'คลิก Save'] },
+          { title: 'การทดสอบ Slideshow', steps: ['คลิก Slide Show', 'เลือก From Beginning', 'ดูงานนำเสนอ', 'กด Esc'] },
+          { title: 'การส่งออกเป็นวิดีโอ', steps: ['คลิก File', 'เลือก Export', 'เลือก Video', 'คลิก Create'] }
+        ]
+      }
+    };
+
+    // ==================== State Management ====================
+    let currentUser = null;
+    let currentAdmin = null;
+    let allData = [];
+    let currentCategory = 'word';
+    let currentGame = null;
+    let gameState = {};
+    let adminPanelState = {
+      searchQuery: '',
+      selectedEmail: null
+    };
+
+    // ==================== Default Config ====================
+    const defaultConfig = {
+      site_title: 'เกมฝึกทักษะ Microsoft Office',
+      footer_text: 'วิทยาลัยอาชีวศึกษาสระบุรี สาขาวิชา คอมพิวเตอร์ธุรกิจ & เทคโนโลยีธุรกิจดิจิทัล',
+      primary_color: '#6366f1',
+      secondary_color: '#8b5cf6',
+      background_color: '#f5f3ff',
+      text_color: '#1e1b4b',
+      accent_color: '#ec4899'
+    };
+
+    let config = { ...defaultConfig };
+
+    const adminCredential = {
+      email: 'nopponpa853@gmail.com',
+      password: 'love_0965840062',
+      name: 'ผู้ดูแลระบบ'
+    };
+
+    const LOCAL_DATA_KEY = 'officeGameDataV1';
+    const PENDING_SYNC_KEY = 'officeGamePendingCreatesV1';
+
+    let isRemoteReady = false;
+    let reconnectTimer = null;
+
+    // ==================== Data SDK Handler ====================
+    const dataHandler = {
+      onDataChanged(data) {
+        isRemoteReady = true;
+        const remoteData = Array.isArray(data) ? data : [];
+        const merged = mergeRecords(remoteData, loadLocalData());
+        allData = merged;
+        saveLocalData(merged);
+        checkLoginStatus();
+        flushPendingCreates();
+      }
+    };
+
+    function getRecordKey(record = {}) {
+      return [
+        record.user_type || '',
+        record.email || '',
+        record.game_name || '',
+        record.level || '',
+        String(record.score ?? ''),
+        record.played_at || '',
+        record.name || ''
+      ].join('||');
+    }
+
+    function mergeRecords(primary = [], secondary = []) {
+      const map = new Map();
+      [...secondary, ...primary].forEach(record => {
+        map.set(getRecordKey(record), record);
+      });
+      return Array.from(map.values());
+    }
+
+    function loadLocalData() {
+      try {
+        return JSON.parse(localStorage.getItem(LOCAL_DATA_KEY) || '[]');
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function saveLocalData(data) {
+      localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(data));
+    }
+
+    function loadPendingCreates() {
+      try {
+        return JSON.parse(localStorage.getItem(PENDING_SYNC_KEY) || '[]');
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function savePendingCreates(data) {
+      localStorage.setItem(PENDING_SYNC_KEY, JSON.stringify(data));
+    }
+
+    function queuePendingCreate(payload) {
+      const pending = loadPendingCreates();
+      pending.push(payload);
+      savePendingCreates(pending);
+    }
+
+    async function flushPendingCreates() {
+      if (!isRemoteReady || !window.dataSdk) return;
+
+      let pending = loadPendingCreates();
+      if (!pending.length) return;
+
+      const stillPending = [];
+      for (const item of pending) {
+        const result = await window.dataSdk.create(item);
+        if (!result.isOk) {
+          stillPending.push(item);
+        }
+      }
+      savePendingCreates(stillPending);
+    }
+
+    async function connectRemoteDataSdk() {
+      if (!window.dataSdk) return false;
+
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        isRemoteReady = false;
+        return false;
+      }
+
+      isRemoteReady = true;
+      await flushPendingCreates();
+      return true;
+    }
+
+    function ensureReconnectWorker() {
+      if (reconnectTimer || !window.dataSdk) return;
+      reconnectTimer = setInterval(async () => {
+        if (isRemoteReady) return;
+        const connected = await connectRemoteDataSdk();
+        if (connected) {
+          showToast('เชื่อมต่อฐานข้อมูลกลางสำเร็จ ข้อมูลถูกซิงก์แล้ว ✅', 'success');
+        }
+      }, 10000);
+    }
+
+    async function initDataLayer() {
+      const connected = await connectRemoteDataSdk();
+      if (!connected) {
+        console.warn('Data SDK unavailable: using local cache temporarily.');
+        allData = loadLocalData();
+        checkLoginStatus();
+        ensureReconnectWorker();
+      }
+    }
+
+    async function createRecord(payload) {
+      const localMerged = mergeRecords(loadLocalData(), [payload]);
+      saveLocalData(localMerged);
+      allData = localMerged;
+      checkLoginStatus();
+
+      if (isRemoteReady && window.dataSdk) {
+        const result = await window.dataSdk.create(payload);
+        if (result.isOk) {
+          return result;
+        }
+      }
+
+      queuePendingCreate(payload);
+      ensureReconnectWorker();
+      return { isOk: true, isQueued: true };
+    }
+    function checkLoginStatus() {
+      const savedEmail = localStorage.getItem('currentUserEmail');
+      if (savedEmail) {
+        const user = allData.find(d => d.user_type === 'user' && d.email === savedEmail);
+        if (user) {
+          currentUser = user;
+          updateUIForLoggedIn();
+        } else {
+          updateUIForLoggedOut();
+        }
+      } else {
+        updateUIForLoggedOut();
+      }
+
+      const savedAdminEmail = localStorage.getItem('currentAdminEmail');
+      if (savedAdminEmail) {
+        const admin = findAdminByEmail(savedAdminEmail);
+        if (admin) {
+          currentAdmin = admin;
+          updateUIForAdmin();
+        } else {
+          updateUIForAdminLoggedOut();
+        }
+      } else {
+        updateUIForAdminLoggedOut();
+      }
+    }
+
+    function findAdminByEmail(email) {
+      if (email === adminCredential.email) {
+        return { ...adminCredential, user_type: 'admin' };
+      }
+      return allData.find(d => d.user_type === 'admin' && d.email === email) || null;
+    }
+
+    function updateUIForLoggedIn() {
+      if (currentUser) {
+        document.getElementById('user-info').classList.remove('hidden');
+        document.getElementById('user-name-display').textContent = currentUser.name;
+        document.getElementById('btn-register').classList.add('hidden');
+        document.getElementById('btn-login').classList.add('hidden');
+        document.getElementById('btn-logout').classList.remove('hidden');
+      }
+    }
+
+    function updateUIForLoggedOut() {
+      document.getElementById('user-info').classList.add('hidden');
+      document.getElementById('btn-register').classList.remove('hidden');
+      document.getElementById('btn-login').classList.remove('hidden');
+      document.getElementById('btn-logout').classList.add('hidden');
+      currentUser = null;
+    }
+
+    function updateUIForAdmin() {
+      if (currentAdmin) {
+        document.getElementById('btn-admin-login').classList.add('hidden');
+        document.getElementById('btn-admin-panel').classList.remove('hidden');
+      }
+    }
+
+    function updateUIForAdminLoggedOut() {
+      document.getElementById('btn-admin-login').classList.remove('hidden');
+      document.getElementById('btn-admin-panel').classList.add('hidden');
+      currentAdmin = null;
+    }
+
+    // ==================== Element SDK ====================
+    async function initElementSdk() {
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (newConfig) => {
+            config = { ...config, ...newConfig };
+            applyConfig();
+          },
+          mapToCapabilities: (cfg) => ({
+            recolorables: [
+              {
+                get: () => cfg.primary_color || defaultConfig.primary_color,
+                set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+              },
+              {
+                get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+              },
+              {
+                get: () => cfg.background_color || defaultConfig.background_color,
+                set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+              },
+              {
+                get: () => cfg.text_color || defaultConfig.text_color,
+                set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+              },
+              {
+                get: () => cfg.accent_color || defaultConfig.accent_color,
+                set: (v) => { cfg.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (cfg) => new Map([
+            ['site_title', cfg.site_title || defaultConfig.site_title],
+            ['footer_text', cfg.footer_text || defaultConfig.footer_text]
+          ])
+        });
+        config = { ...defaultConfig, ...window.elementSdk.config };
+      }
+      applyConfig();
+    }
+
+    function applyConfig() {
+      document.getElementById('site-title').textContent = config.site_title || defaultConfig.site_title;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+    }
+
+    // ==================== Modal Functions ====================
+    function showModal(content, id = 'modal') {
+      const container = document.getElementById('modals-container');
+      container.innerHTML = `
+        <div id="${id}" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black/50">
+          <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90%] overflow-y-auto animate-in">
+            ${content}
+          </div>
+        </div>
+      `;
+      
+      document.getElementById(id).addEventListener('click', (e) => {
+        if (e.target.id === id) closeModal();
+      });
+    }
+
+    function showGameModal(content, id = 'game-modal') {
+      const container = document.getElementById('modals-container');
+      container.innerHTML = `
+        <div id="${id}" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black/50">
+          <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90%] overflow-y-auto">
+            ${content}
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      document.getElementById('modals-container').innerHTML = '';
+    }
+
+    // ==================== How to Play Modal ====================
+    function showHowToPlay() {
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-8">
+            <span class="text-6xl mb-4 block">🎮</span>
+            <h2 class="text-2xl font-bold text-gray-800">วิธีการเล่นเกม</h2>
+            <p class="text-gray-500 mt-2">เรียนรู้วิธีเล่นเกมทั้ง 4 รูปแบบ</p>
+          </div>
+          
+          <div class="space-y-6">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-2xl">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">⌨️</span>
+                <h3 class="font-bold text-blue-700">เกมพิมพ์คำศัพท์</h3>
+              </div>
+              <p class="text-gray-600 text-sm">เติมตัวอักษรที่หายไปให้ครบถ้วน แล้วพิมพ์คำตอบที่ถูกต้อง (10 ข้อ)</p>
+            </div>
+            
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 rounded-2xl">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">❓</span>
+                <h3 class="font-bold text-green-700">เกมตอบคำถาม</h3>
+              </div>
+              <p class="text-gray-600 text-sm">เลือกคำตอบที่ถูกต้องจาก 4 ตัวเลือก (10 ข้อ)</p>
+            </div>
+            
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-5 rounded-2xl">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">🔗</span>
+                <h3 class="font-bold text-purple-700">เกมจับคู่</h3>
+              </div>
+              <p class="text-gray-600 text-sm">จับคู่ไอคอนกับชื่อที่ถูกต้อง (6 คู่)</p>
+              <p class="text-purple-600 text-xs mt-2">💡 คลิกซ้ายแล้วคลิกขวาเพื่อจับคู่</p>
+            </div>
+            
+            <div class="bg-gradient-to-r from-orange-50 to-amber-50 p-5 rounded-2xl">
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">📋</span>
+                <h3 class="font-bold text-orange-700">เกมจำลองสถานการณ์</h3>
+              </div>
+              <p class="text-gray-600 text-sm">ลากวางเรียงลำดับขั้นตอนให้ถูกต้อง (10 ข้อ แต่ละข้อมี 4 ขั้นตอน)</p>
+            </div>
+          </div>
+          
+          <div class="mt-8 p-4 bg-yellow-50 rounded-xl">
+            <p class="text-center text-yellow-700 font-medium">
+              💡 <strong>การให้คะแนน:</strong> ตอบถูก 1 ข้อ = 1 คะแนน
+            </p>
+            <p class="text-center text-yellow-700 font-medium mt-2">
+              ⚠️ กรุณาสมัครสมาชิกหรือเข้าสู่ระบบก่อนเล่นเกม
+            </p>
+          </div>
+          
+          <button onclick="closeModal()" class="w-full mt-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+            เข้าใจแล้ว เริ่มเลย! 🚀
+          </button>
+        </div>
+      `;
+      showModal(content, 'how-to-play-modal');
+    }
+
+    // ==================== Auth Modals ====================
+    function showRegisterModal() {
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <span class="text-5xl mb-3 block">📝</span>
+            <h2 class="text-2xl font-bold text-gray-800">สมัครสมาชิก</h2>
+          </div>
+          
+          <form id="register-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">อีเมล</label>
+              <input type="email" id="reg-email" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="example@email.com">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อ</label>
+              <input type="text" id="reg-name" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="ชื่อของคุณ">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่าน</label>
+              <input type="password" id="reg-password" required minlength="4"
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="••••••••">
+            </div>
+            
+            <div id="reg-error" class="hidden text-red-500 text-sm text-center p-3 bg-red-50 rounded-xl"></div>
+            <div id="reg-success" class="hidden text-green-500 text-sm text-center p-3 bg-green-50 rounded-xl"></div>
+            
+            <button type="submit" id="reg-btn" class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              สมัครสมาชิก
+            </button>
+          </form>
+          
+          <button onclick="closeModal()" class="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ยกเลิก
+          </button>
+        </div>
+      `;
+      showModal(content, 'register-modal');
+      closeMenu();
+      
+      document.getElementById('register-form').addEventListener('submit', handleRegister);
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const email = document.getElementById('reg-email').value.trim();
+      const name = document.getElementById('reg-name').value.trim();
+      const password = document.getElementById('reg-password').value;
+      const errorDiv = document.getElementById('reg-error');
+      const successDiv = document.getElementById('reg-success');
+      const btn = document.getElementById('reg-btn');
+      
+      errorDiv.classList.add('hidden');
+      successDiv.classList.add('hidden');
+      
+      // Check if email exists
+      const existingUser = allData.find(d => d.user_type === 'user' && d.email === email);
+      if (existingUser) {
+        errorDiv.textContent = 'อีเมลนี้ถูกใช้งานแล้ว';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
+      // Check record limit
+      if (allData.length >= 999) {
+        errorDiv.textContent = 'ระบบเต็มแล้ว กรุณาติดต่อผู้ดูแล';
+        errorDiv.classList.remove('hidden');
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="animate-spin">⏳</span> กำลังสมัคร...';
+      
+      const result = await createRecord({
+        user_type: 'user',
+        email: email,
+        name: name,
+        password: password,
+        game_name: '',
+        level: '',
+        score: 0,
+        played_at: ''
+      });
+      
+      if (result.isOk) {
+        successDiv.textContent = result.isQueued ? 'สมัครสมาชิกสำเร็จในโหมดออฟไลน์ ระบบจะซิงก์อัตโนมัติเมื่อออนไลน์' : 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ';
+        successDiv.classList.remove('hidden');
+        setTimeout(() => {
+          closeModal();
+          showLoginModal();
+        }, 1500);
+      } else {
+        errorDiv.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+        errorDiv.classList.remove('hidden');
+      }
+      
+      btn.disabled = false;
+      btn.textContent = 'สมัครสมาชิก';
+    }
+
+    function showLoginModal() {
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <span class="text-5xl mb-3 block">🔑</span>
+            <h2 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบ</h2>
+          </div>
+          
+          <form id="login-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">อีเมล</label>
+              <input type="email" id="login-email" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="example@email.com">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่าน</label>
+              <input type="password" id="login-password" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="••••••••">
+            </div>
+            
+            <div id="login-error" class="hidden text-red-500 text-sm text-center p-3 bg-red-50 rounded-xl"></div>
+            
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              เข้าสู่ระบบ
+            </button>
+          </form>
+          
+          <button onclick="closeModal()" class="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ยกเลิก
+          </button>
+        </div>
+      `;
+      showModal(content, 'login-modal');
+      closeMenu();
+      
+      document.getElementById('login-form').addEventListener('submit', handleLogin);
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      
+      const user = allData.find(d => d.user_type === 'user' && d.email === email && d.password === password);
+      
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUserEmail', email);
+        updateUIForLoggedIn();
+        closeModal();
+        showToast('เข้าสู่ระบบสำเร็จ! 🎉', 'success');
+      } else {
+        errorDiv.textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('currentUserEmail');
+      updateUIForLoggedOut();
+      closeMenu();
+      showToast('ออกจากระบบเรียบร้อย', 'info');
+    }
+
+    function handleAdminLogout() {
+      localStorage.removeItem('currentAdminEmail');
+      updateUIForAdminLoggedOut();
+      closeMenu();
+      showToast('ออกจากระบบแอดมินเรียบร้อย', 'info');
+    }
+
+    // ==================== History Modal ====================
+    function showHistoryModal() {
+      closeMenu();
+      
+      if (!currentUser) {
+        showToast('กรุณาเข้าสู่ระบบก่อน', 'warning');
+        return;
+      }
+      
+      const userHistory = allData.filter(d => d.user_type === 'history' && d.email === currentUser.email);
+      
+      let historyHTML = '';
+      if (userHistory.length === 0) {
+        historyHTML = `
+          <div class="text-center py-12">
+            <span class="text-6xl block mb-4">📭</span>
+            <p class="text-gray-500">ยังไม่มีประวัติการเล่น</p>
+          </div>
+        `;
+      } else {
+        historyHTML = `
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="bg-indigo-50">
+                  <th class="px-4 py-3 text-left text-sm font-bold text-indigo-700 rounded-tl-xl">เกม</th>
+                  <th class="px-4 py-3 text-left text-sm font-bold text-indigo-700">หมวด</th>
+                  <th class="px-4 py-3 text-center text-sm font-bold text-indigo-700">คะแนน</th>
+                  <th class="px-4 py-3 text-right text-sm font-bold text-indigo-700 rounded-tr-xl">วันที่</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100">
+                ${userHistory.map(h => `
+                  <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-4 py-3 text-sm text-gray-700">${h.game_name}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500">${h.level}</td>
+                    <td class="px-4 py-3 text-center">
+                      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold ${h.score >= 7 ? 'bg-green-100 text-green-700' : h.score >= 4 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">
+                        ${h.score}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-gray-400 text-right">${h.played_at}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+      
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <span class="text-5xl mb-3 block">📊</span>
+            <h2 class="text-2xl font-bold text-gray-800">ประวัติการเล่น</h2>
+            <p class="text-gray-500">${currentUser.name}</p>
+          </div>
+          ${historyHTML}
+          <button onclick="closeModal()" class="w-full mt-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+            ปิด
+          </button>
+        </div>
+      `;
+      showModal(content, 'history-modal');
+    }
+
+    // ==================== Developer Modal ====================
+    function showDeveloperModal() {
+      closeMenu();
+      
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-8">
+            <span class="text-6xl mb-4 block">👩‍💻</span>
+            <h2 class="text-2xl font-bold text-gray-800">ผู้พัฒนาเกม</h2>
+          </div>
+          
+          <div class="bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-2xl">
+            <div class="space-y-4">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
+                  <span class="text-2xl">👤</span>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">ชื่อ-นามสกุล</p>
+                  <p class="font-bold text-gray-800">นางสาวปานระวัน ซื่อสัตย์</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <span class="text-2xl">🎓</span>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">ระดับชั้น</p>
+                  <p class="font-bold text-gray-800">ชคพ.3/1</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                  <span class="text-2xl">📞</span>
+                </div>
+                <div>
+                  <p class="text-sm text-gray-500">เบอร์ติดต่อ</p>
+                  <p class="font-bold text-gray-800">096-584-0062</p>
+                </div>
+              </div>
+          
+ <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">👤</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">ชื่อ-นามสกุล</p>
+      <p class="font-bold text-gray-800">นางสาวอวรรณ จุณศรี</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">🎓</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">ระดับชั้น</p>
+      <p class="font-bold text-gray-800">ชคพ3/1</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">📞</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">เบอร์ติดต่อ</p>
+      <p class="font-bold text-gray-800">092-320-2540</p>
+    </div>
+  </div>
+  <div class="border-t border-purple-100"></div>
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">👤</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">ชื่อ-นามสกุล</p>
+      <p class="font-bold text-gray-800">นางสาวนฤมล คงสมทอง</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">🎓</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">ระดับชั้น</p>
+      <p class="font-bold text-gray-800">ชคพ3/1</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+      <span class="text-2xl">📞</span>
+    </div>
+    <div>
+      <p class="text-sm text-gray-500">เบอร์ติดต่อ</p>
+      <p class="font-bold text-gray-800">082-875-5839</p>
+    </div>
+  </div>
+</div>
+          
+          <button onclick="closeModal()" class="w-full mt-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+            ปิด
+          </button>
+        </div>
+      `;
+      showModal(content, 'developer-modal');
+    }
+
+    // ==================== Admin Modals ====================
+    function showAdminLoginModal() {
+      const content = `
+        <div class="p-8">
+          <div class="text-center mb-6">
+            <span class="text-5xl mb-3 block">🛡️</span>
+            <h2 class="text-2xl font-bold text-gray-800">เข้าสู่ระบบแอดมิน</h2>
+            <p class="text-sm text-gray-500 mt-2">สำหรับผู้ดูแลระบบเท่านั้น</p>
+          </div>
+
+          <form id="admin-login-form" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">อีเมลแอดมิน</label>
+              <input type="email" id="admin-login-email" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="admin@email.com">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">รหัสผ่าน</label>
+              <input type="password" id="admin-login-password" required
+                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors"
+                placeholder="••••••••">
+            </div>
+
+            <div id="admin-login-error" class="hidden text-red-500 text-sm text-center p-3 bg-red-50 rounded-xl"></div>
+            
+            <button type="submit" class="w-full py-4 bg-gradient-to-r from-slate-700 to-slate-900 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              เข้าสู่ระบบแอดมิน
+            </button>
+          </form>
+          
+          <button onclick="closeModal()" class="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ยกเลิก
+          </button>
+        </div>
+      `;
+      showModal(content, 'admin-login-modal');
+      closeMenu();
+
+      document.getElementById('admin-login-form').addEventListener('submit', handleAdminLogin);
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('admin-login-email').value.trim();
+      const password = document.getElementById('admin-login-password').value;
+      const errorDiv = document.getElementById('admin-login-error');
+      const admin =
+        (email === adminCredential.email && password === adminCredential.password)
+          ? { ...adminCredential, user_type: 'admin' }
+          : allData.find(d => d.user_type === 'admin' && d.email === email && d.password === password);
+
+      if (admin) {
+        currentAdmin = admin;
+        localStorage.setItem('currentAdminEmail', email);
+        updateUIForAdmin();
+        closeModal();
+        showToast('เข้าสู่ระบบแอดมินสำเร็จ! ✅', 'success');
+      } else {
+        errorDiv.textContent = 'อีเมลหรือรหัสผ่านแอดมินไม่ถูกต้อง';
+        errorDiv.classList.remove('hidden');
+      }
+    }
+
+    function showAdminPanel() {
+      closeMenu();
+
+      if (!currentAdmin) {
+        showToast('กรุณาเข้าสู่ระบบแอดมินก่อน', 'warning');
+        showAdminLoginModal();
+        return;
+      }
+
+      const users = allData.filter(d => d.user_type === 'user');
+      const selectedUserExists = users.some(u => u.email === adminPanelState.selectedEmail);
+      if (!selectedUserExists) {
+        adminPanelState.selectedEmail = users[0]?.email || null;
+      }
+
+      renderAdminPanel();
+    }
+
+    function handleAdminSearch(query, cursorPos = null) {
+      const users = allData.filter(d => d.user_type === 'user');
+      adminPanelState.searchQuery = (query || '').trim().toLowerCase();
+
+      const filteredUsers = users.filter(user => {
+        const name = (user.name || '').toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        return name.includes(adminPanelState.searchQuery) || email.includes(adminPanelState.searchQuery);
+      });
+
+      if (!filteredUsers.some(user => user.email === adminPanelState.selectedEmail)) {
+        adminPanelState.selectedEmail = filteredUsers[0]?.email || null;
+      }
+
+      renderAdminPanel({ keepSearchFocus: true, cursorPos });
+    }
+
+    function selectAdminPlayer(email) {
+      adminPanelState.selectedEmail = email;
+      renderAdminPanel();
+    }
+
+    function renderAdminPanel(options = {}) {
+      const users = allData.filter(d => d.user_type === 'user');
+      const history = allData.filter(d => d.user_type === 'history');
+      const query = adminPanelState.searchQuery;
+
+      const filteredUsers = users.filter(user => {
+        if (!query) return true;
+        const name = (user.name || '').toLowerCase();
+        const email = (user.email || '').toLowerCase();
+        return name.includes(query) || email.includes(query);
+      });
+
+      const selectedUser = filteredUsers.find(u => u.email === adminPanelState.selectedEmail) || null;
+      const selectedHistory = selectedUser
+        ? history.filter(h => h.email === selectedUser.email).slice().reverse()
+        : [];
+
+      const totalPlayCount = selectedHistory.length;
+      const totalScore = selectedHistory.reduce((sum, item) => sum + Number(item.score || 0), 0);
+      const avgScore = totalPlayCount > 0 ? (totalScore / totalPlayCount).toFixed(1) : '0.0';
+      const bestScore = totalPlayCount > 0 ? Math.max(...selectedHistory.map(item => Number(item.score || 0))) : 0;
+      const latestPlay = totalPlayCount > 0 ? selectedHistory[0].played_at : '-';
+
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-gray-800">แผงควบคุมแอดมิน</h2>
+              <p class="text-sm text-gray-500">ผู้ดูแล: ${currentAdmin.name}</p>
+              <p class="text-xs mt-1 ${isRemoteReady ? 'text-emerald-600' : 'text-amber-600'}">สถานะข้อมูล: ${isRemoteReady ? 'ฐานข้อมูลกลาง (เห็นผู้เล่นทุกอุปกรณ์)' : 'ออฟไลน์ชั่วคราว (เฉพาะเครื่องนี้ กำลังรอซิงก์)'}</p>
+            </div>
+            <button onclick="handleAdminLogout()" class="px-4 py-2 text-sm bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors">
+              ออกจากระบบแอดมิน
+            </button>
+          </div>
+
+          <div class="bg-indigo-50 rounded-2xl p-4 mb-5">
+            <label class="block text-sm font-bold text-indigo-700 mb-2">ค้นหารายชื่อผู้เล่น</label>
+            <input
+              id="admin-player-search-input"
+              type="text"
+              value="${adminPanelState.searchQuery}"
+              oninput="handleAdminSearch(this.value, this.selectionStart)"
+              placeholder="ค้นหาด้วยชื่อหรืออีเมล..."
+              class="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:outline-none"
+            />
+            <p class="text-xs text-indigo-600 mt-2">พบ ${filteredUsers.length} คน</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 max-h-48 overflow-y-auto pr-1">
+            ${filteredUsers.map(user => `
+              <button
+                onclick="selectAdminPlayer('${user.email}')"
+                class="text-left p-4 rounded-2xl border-2 transition-all ${adminPanelState.selectedEmail === user.email ? 'border-indigo-500 bg-indigo-50 shadow' : 'border-gray-200 hover:border-indigo-300 bg-white'}"
+              >
+                <p class="font-bold text-gray-800">${user.name}</p>
+                <p class="text-sm text-gray-500">${user.email}</p>
+              </button>
+            `).join('') || `
+              <div class="md:col-span-2 text-center text-gray-400 bg-gray-50 p-4 rounded-xl">ไม่พบผู้เล่นตามคำค้นหา</div>
+            `}
+          </div>
+
+          ${selectedUser ? `
+            <div class="bg-white border border-gray-200 rounded-2xl p-5">
+              <h3 class="text-lg font-bold text-gray-800 mb-1">ข้อมูลผู้เล่นที่เลือก</h3>
+              <p class="text-sm text-gray-500 mb-4">${selectedUser.name} · ${selectedUser.email}</p>
+
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                <div class="p-3 rounded-xl bg-indigo-50">
+                  <p class="text-xs text-indigo-600">จำนวนครั้งที่เล่น</p>
+                  <p class="text-xl font-bold text-indigo-800">${totalPlayCount}</p>
+                </div>
+                <div class="p-3 rounded-xl bg-emerald-50">
+                  <p class="text-xs text-emerald-600">คะแนนเฉลี่ย</p>
+                  <p class="text-xl font-bold text-emerald-800">${avgScore}</p>
+                </div>
+                <div class="p-3 rounded-xl bg-amber-50">
+                  <p class="text-xs text-amber-600">คะแนนสูงสุด</p>
+                  <p class="text-xl font-bold text-amber-800">${bestScore}</p>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50">
+                  <p class="text-xs text-slate-600">เล่นล่าสุด</p>
+                  <p class="text-sm font-bold text-slate-800">${latestPlay}</p>
+                </div>
+              </div>
+
+              <h4 class="font-bold text-gray-700 mb-2">ประวัติการเล่นของผู้เล่นนี้</h4>
+              <div class="max-h-56 overflow-y-auto border border-gray-100 rounded-xl">
+                <table class="w-full text-sm">
+                  <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th class="px-3 py-2 text-left">เกม</th>
+                      <th class="px-3 py-2 text-left">หมวด</th>
+                      <th class="px-3 py-2 text-center">คะแนน</th>
+                      <th class="px-3 py-2 text-right">วันที่</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-100">
+                    ${selectedHistory.map(play => `
+                      <tr>
+                        <td class="px-3 py-2">${play.game_name}</td>
+                        <td class="px-3 py-2 text-gray-500">${play.level}</td>
+                        <td class="px-3 py-2 text-center font-bold text-indigo-600">${play.score}</td>
+                        <td class="px-3 py-2 text-right text-gray-400">${play.played_at}</td>
+                      </tr>
+                    `).join('') || `
+                      <tr>
+                        <td colspan="4" class="px-3 py-6 text-center text-gray-400">ผู้เล่นนี้ยังไม่มีประวัติการเล่น</td>
+                      </tr>
+                    `}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ` : `
+            <div class="bg-gray-50 rounded-2xl p-6 text-center text-gray-400">กรุณาเลือกผู้เล่นจากผลการค้นหาด้านบน</div>
+          `}
+
+          <button onclick="closeModal()" class="w-full mt-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+            ปิด
+          </button>
+        </div>
+      `;
+
+      showModal(content, 'admin-panel-modal');
+
+      if (options.keepSearchFocus) {
+        const searchInput = document.getElementById('admin-player-search-input');
+        if (searchInput) {
+          searchInput.focus();
+          const position = Number.isInteger(options.cursorPos)
+            ? options.cursorPos
+            : searchInput.value.length;
+          searchInput.setSelectionRange(position, position);
+        }
+      }
+    }
+
+    // ==================== Toast Notification ====================
+    function showToast(message, type = 'info') {
+      const colors = {
+        success: 'bg-green-500',
+        error: 'bg-red-500',
+        warning: 'bg-yellow-500',
+        info: 'bg-indigo-500'
+      };
+      
+      const toast = document.createElement('div');
+      toast.className = `fixed top-24 left-1/2 -translate-x-1/2 ${colors[type]} text-white px-6 py-3 rounded-full shadow-lg z-50 animate-in`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ==================== Menu Functions ====================
+    function openMenu() {
+      document.getElementById('menu-overlay').classList.remove('hidden');
+      document.getElementById('menu-popup').classList.add('active');
+    }
+
+    function closeMenu() {
+      document.getElementById('menu-overlay').classList.add('hidden');
+      document.getElementById('menu-popup').classList.remove('active');
+    }
+
+    // ==================== Render Games ====================
+    function renderGames() {
+      const container = document.getElementById('games-container');
+      const data = gameData[currentCategory];
+      
+      const games = [
+        { id: 'typing', name: 'เกมพิมพ์คำศัพท์', icon: '⌨️', desc: 'เติมตัวอักษรที่หายไป', questions: 10, color: 'from-blue-400 to-blue-600' },
+        { id: 'quiz', name: 'เกมตอบคำถาม', icon: '❓', desc: 'ตอบคำถามปรนัย 4 ตัวเลือก', questions: 10, color: 'from-green-400 to-green-600' },
+        { id: 'matching', name: 'เกมจับคู่', icon: '🔗', desc: 'จับคู่ไอคอนกับชื่อ', questions: 6, color: 'from-purple-400 to-purple-600' },
+        { id: 'scenario', name: 'เกมจำลองสถานการณ์', icon: '📋', desc: 'เรียงลำดับขั้นตอนแต่ละสถานการณ์', questions: 10, color: 'from-orange-400 to-orange-600' }
+      ];
+      
+      container.innerHTML = games.map(game => `
+        <div class="game-card bg-white rounded-3xl shadow-xl overflow-hidden" onclick="startGame('${game.id}')">
+          <div class="bg-gradient-to-r ${game.color} p-6">
+            <span class="text-5xl">${game.icon}</span>
+          </div>
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2">${game.name}</h3>
+            <p class="text-gray-500 mb-4">${game.desc}</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-400">${game.questions} ข้อ</span>
+              <span class="px-4 py-2 bg-gradient-to-r ${game.color} text-white text-sm font-bold rounded-full">
+                เล่นเลย →
+              </span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ==================== Start Game ====================
+    function startGame(gameType) {
+      if (!currentUser) {
+        showToast('กรุณาเข้าสู่ระบบก่อนเล่นเกม', 'warning');
+        showLoginModal();
+        return;
+      }
+      
+      currentGame = gameType;
+      gameState = {
+        currentQuestion: 0,
+        score: 0,
+        answers: []
+      };
+      
+      switch(gameType) {
+        case 'typing':
+          renderTypingGame();
+          break;
+        case 'quiz':
+          renderQuizGame();
+          break;
+        case 'matching':
+          renderMatchingGame();
+          break;
+        case 'scenario':
+          renderScenarioGame();
+          break;
+      }
+    }
+
+    // ==================== Typing Game ====================
+    function renderTypingGame() {
+      const data = gameData[currentCategory].typing;
+      const current = data[gameState.currentQuestion];
+      
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">⌨️</span>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">เกมพิมพ์คำศัพท์</h2>
+                <p class="text-sm text-gray-500">${gameData[currentCategory].name}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-2xl font-bold text-indigo-600">${gameState.currentQuestion + 1}/10</p>
+              <p class="text-sm text-gray-500">คะแนน: ${gameState.score}</p>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 text-center mb-6">
+            <p class="text-sm text-gray-500 mb-4">เติมตัวอักษรที่หายไป:</p>
+            <p class="text-4xl font-mono font-bold text-indigo-700 tracking-wider mb-4">${current.hint}</p>
+            <p class="text-sm text-gray-400">💡 คำใบ้: ${current.desc}</p>
+          </div>
+          
+          <div class="space-y-4">
+            <input type="text" id="typing-answer" 
+              class="w-full px-6 py-4 text-center text-2xl font-bold border-3 border-indigo-200 rounded-2xl focus:border-indigo-500 focus:outline-none transition-colors uppercase"
+              placeholder="พิมพ์คำตอบ..."
+              autocomplete="off">
+            
+            <div id="typing-feedback" class="hidden text-center p-4 rounded-xl"></div>
+            
+            <button onclick="checkTypingAnswer()" id="typing-submit"
+              class="w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              ตรวจคำตอบ
+            </button>
+          </div>
+          
+          <button onclick="closeModal()" class="w-full mt-4 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ออกจากเกม
+          </button>
+        </div>
+      `;
+      showGameModal(content);
+      
+      document.getElementById('typing-answer').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkTypingAnswer();
+      });
+      document.getElementById('typing-answer').focus();
+    }
+
+    function checkTypingAnswer() {
+      const data = gameData[currentCategory].typing;
+      const current = data[gameState.currentQuestion];
+      const answer = document.getElementById('typing-answer').value.trim().toUpperCase();
+      const feedback = document.getElementById('typing-feedback');
+      const btn = document.getElementById('typing-submit');
+      
+      if (!answer) return;
+      
+      btn.disabled = true;
+      
+      const isCorrect = answer === current.answer;
+      if (isCorrect) {
+        gameState.score++;
+        feedback.className = 'text-center p-4 rounded-xl bg-green-100 text-green-700';
+        feedback.innerHTML = '✅ ถูกต้อง! เก่งมาก!';
+      } else {
+        feedback.className = 'text-center p-4 rounded-xl bg-red-100 text-red-700';
+        feedback.innerHTML = `❌ ไม่ถูกต้อง คำตอบคือ: <strong>${current.answer}</strong>`;
+      }
+      feedback.classList.remove('hidden');
+      
+      setTimeout(() => {
+        gameState.currentQuestion++;
+        if (gameState.currentQuestion < 10) {
+          renderTypingGame();
+        } else {
+          showGameResult();
+        }
+      }, 1500);
+    }
+
+    // ==================== Quiz Game ====================
+    function renderQuizGame() {
+      const data = gameData[currentCategory].quiz;
+      const current = data[gameState.currentQuestion];
+      
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">❓</span>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">เกมตอบคำถาม</h2>
+                <p class="text-sm text-gray-500">${gameData[currentCategory].name}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-2xl font-bold text-indigo-600">${gameState.currentQuestion + 1}/10</p>
+              <p class="text-sm text-gray-500">คะแนน: ${gameState.score}</p>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 mb-6">
+            <p class="text-lg font-medium text-gray-800">${current.q}</p>
+          </div>
+          
+          <div id="quiz-choices" class="grid grid-cols-1 gap-3">
+            ${current.choices.map((choice, i) => `
+              <button onclick="checkQuizAnswer(${i})" 
+                class="quiz-choice p-4 text-left border-2 border-gray-200 rounded-xl hover:border-indigo-400 hover:bg-indigo-50 transition-all font-medium">
+                <span class="inline-flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full mr-3 text-sm font-bold">
+                  ${['ก', 'ข', 'ค', 'ง'][i]}
+                </span>
+                ${choice}
+              </button>
+            `).join('')}
+          </div>
+          
+          <button onclick="closeModal()" class="w-full mt-6 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ออกจากเกม
+          </button>
+        </div>
+      `;
+      showGameModal(content);
+    }
+
+    function checkQuizAnswer(selected) {
+      const data = gameData[currentCategory].quiz;
+      const current = data[gameState.currentQuestion];
+      const buttons = document.querySelectorAll('.quiz-choice');
+      
+      buttons.forEach(btn => btn.disabled = true);
+      
+      const isCorrect = selected === current.answer;
+      if (isCorrect) {
+        gameState.score++;
+        buttons[selected].classList.add('correct-answer');
+      } else {
+        buttons[selected].classList.add('wrong-answer');
+        buttons[current.answer].classList.add('correct-answer');
+      }
+      
+      setTimeout(() => {
+        gameState.currentQuestion++;
+        if (gameState.currentQuestion < 10) {
+          renderQuizGame();
+        } else {
+          showGameResult();
+        }
+      }, 1200);
+    }
+
+    // ==================== Matching Game ====================
+    function renderMatchingGame() {
+      const data = gameData[currentCategory].matching;
+      gameState.matchedPairs = 0;
+      gameState.selectedLeft = null;
+      gameState.selectedRight = null;
+      
+      // Shuffle right side
+      const shuffledRight = [...data].sort(() => Math.random() - 0.5);
+      
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🔗</span>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">เกมจับคู่</h2>
+                <p class="text-sm text-gray-500">${gameData[currentCategory].name}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-2xl font-bold text-indigo-600">${gameState.score}/6</p>
+              <p class="text-sm text-gray-500">คู่ที่ถูกต้อง</p>
+            </div>
+          </div>
+          
+          <p class="text-center text-gray-500 mb-6">เลือกไอคอนทางซ้าย แล้วเลือกชื่อที่ถูกต้องทางขวา</p>
+          
+          <div class="grid grid-cols-2 gap-8">
+            <div class="space-y-3">
+              ${data.map((item, i) => `
+                <button onclick="selectLeft(${i})" id="left-${i}"
+                  class="match-left w-full p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-2 border-transparent hover:border-purple-300 transition-all flex items-center gap-3">
+                  <span class="text-3xl">${item.left}</span>
+                  <span class="text-sm text-gray-500">${item.leftLabel}</span>
+                </button>
+              `).join('')}
+            </div>
+            <div class="space-y-3">
+              ${shuffledRight.map((item, i) => `
+                <button onclick="selectRight('${item.right}')" id="right-${item.right}"
+                  class="match-right w-full p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-transparent hover:border-indigo-300 transition-all text-left font-medium">
+                  ${item.right}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+          
+          <button onclick="closeModal()" class="w-full mt-6 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ออกจากเกม
+          </button>
+        </div>
+      `;
+      showGameModal(content);
+    }
+
+    function selectLeft(index) {
+      document.querySelectorAll('.match-left').forEach(btn => btn.classList.remove('matching-selected'));
+      const btn = document.getElementById(`left-${index}`);
+      if (!btn.classList.contains('matching-matched')) {
+        btn.classList.add('matching-selected');
+        gameState.selectedLeft = index;
+        checkMatch();
+      }
+    }
+
+    function selectRight(name) {
+      document.querySelectorAll('.match-right').forEach(btn => btn.classList.remove('matching-selected'));
+      const btn = document.getElementById(`right-${name}`);
+      if (!btn.classList.contains('matching-matched')) {
+        btn.classList.add('matching-selected');
+        gameState.selectedRight = name;
+        checkMatch();
+      }
+    }
+
+    function checkMatch() {
+      if (gameState.selectedLeft !== null && gameState.selectedRight !== null) {
+        const data = gameData[currentCategory].matching;
+        const leftItem = data[gameState.selectedLeft];
+        
+        const leftBtn = document.getElementById(`left-${gameState.selectedLeft}`);
+        const rightBtn = document.getElementById(`right-${gameState.selectedRight}`);
+        
+        if (leftItem.right === gameState.selectedRight) {
+          // Correct match
+          gameState.score++;
+          gameState.matchedPairs++;
+          
+          leftBtn.classList.add('matching-matched', 'correct-answer');
+          rightBtn.classList.add('matching-matched', 'correct-answer');
+          leftBtn.classList.remove('matching-selected');
+          rightBtn.classList.remove('matching-selected');
+          
+          // Update score display
+          document.querySelector('.text-2xl.font-bold.text-indigo-600').textContent = `${gameState.score}/6`;
+          
+          if (gameState.matchedPairs === 6) {
+            setTimeout(showGameResult, 1000);
+          }
+        } else {
+          // Wrong match
+          leftBtn.classList.add('shake', 'wrong-answer');
+          rightBtn.classList.add('shake', 'wrong-answer');
+          
+          setTimeout(() => {
+            leftBtn.classList.remove('shake', 'wrong-answer', 'matching-selected');
+            rightBtn.classList.remove('shake', 'wrong-answer', 'matching-selected');
+          }, 500);
+        }
+        
+        gameState.selectedLeft = null;
+        gameState.selectedRight = null;
+      }
+    }
+
+    // ==================== Scenario Game ====================
+    function renderScenarioGame() {
+      const data = gameData[currentCategory].scenario[gameState.currentQuestion];
+      const shuffledSteps = [...data.steps].sort(() => Math.random() - 0.5);
+      gameState.correctOrder = data.steps;
+      gameState.currentOrder = shuffledSteps;
+      
+      const content = `
+        <div class="p-8">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">📋</span>
+              <div>
+                <h2 class="text-xl font-bold text-gray-800">เกมจำลองสถานการณ์</h2>
+                <p class="text-sm text-gray-500">${gameData[currentCategory].name}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="text-2xl font-bold text-indigo-600">${gameState.currentQuestion + 1}/10</p>
+              <p class="text-sm text-gray-500">คะแนน: ${gameState.score}</p>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 mb-6">
+            <p class="font-medium text-orange-800">🎯 ${data.title}</p>
+            <p class="text-sm text-orange-600 mt-1">ลากวางเรียงลำดับขั้นตอนให้ถูกต้อง</p>
+          </div>
+          
+          <div id="scenario-container" class="space-y-2">
+            ${shuffledSteps.map((step, i) => `
+              <div class="scenario-item flex items-center gap-3 p-4 bg-white border-2 border-gray-200 rounded-xl cursor-move hover:border-indigo-300 transition-all"
+                draggable="true" data-step="${step}">
+                <span class="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-sm">
+                  ${i + 1}
+                </span>
+                <span class="text-gray-700">${step}</span>
+                <span class="ml-auto text-gray-300">⋮⋮</span>
+              </div>
+            `).join('')}
+          </div>
+          
+          <button onclick="checkScenarioAnswer()" 
+            class="w-full mt-6 py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+            ตรวจคำตอบ
+          </button>
+          
+          <button onclick="closeModal()" class="w-full mt-3 py-3 text-gray-500 hover:text-gray-700 transition-colors">
+            ออกจากเกม
+          </button>
+        </div>
+      `;
+      showGameModal(content);
+      
+      initDragAndDrop();
+    }
+
+    function initDragAndDrop() {
+      const container = document.getElementById('scenario-container');
+      const items = container.querySelectorAll('.scenario-item');
+      let draggedItem = null;
+      
+      items.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+          draggedItem = item;
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          draggedItem = null;
+          updateNumbers();
+        });
+        
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          if (draggedItem && draggedItem !== item) {
+            const rect = item.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            if (e.clientY < midY) {
+              container.insertBefore(draggedItem, item);
+            } else {
+              container.insertBefore(draggedItem, item.nextSibling);
+            }
+          }
+        });
+        
+        item.addEventListener('dragenter', (e) => {
+          e.preventDefault();
+          if (draggedItem !== item) {
+            item.classList.add('drag-over');
+          }
+        });
+        
+        item.addEventListener('dragleave', () => {
+          item.classList.remove('drag-over');
+        });
+        
+        item.addEventListener('drop', () => {
+          item.classList.remove('drag-over');
+        });
+      });
+    }
+
+    function updateNumbers() {
+      const items = document.querySelectorAll('.scenario-item');
+      items.forEach((item, i) => {
+        item.querySelector('span:first-child').textContent = i + 1;
+      });
+    }
+
+    function checkScenarioAnswer() {
+      const items = document.querySelectorAll('.scenario-item');
+      const currentOrder = Array.from(items).map(item => item.dataset.step);
+      
+      let isCorrect = true;
+      currentOrder.forEach((step, i) => {
+        if (step === gameState.correctOrder[i]) {
+          items[i].classList.add('correct-answer');
+        } else {
+          items[i].classList.add('wrong-answer');
+          isCorrect = false;
+        }
+      });
+      
+      if (isCorrect) {
+        gameState.score++;
+      }
+      
+      setTimeout(() => {
+        gameState.currentQuestion++;
+        if (gameState.currentQuestion < 10) {
+          renderScenarioGame();
+        } else {
+          showGameResult();
+        }
+      }, 1500);
+    }
+
+    // ==================== Game Result ====================
+    async function showGameResult() {
+      const gameNames = {
+        typing: 'เกมพิมพ์คำศัพท์',
+        quiz: 'เกมตอบคำถาม',
+        matching: 'เกมจับคู่',
+        scenario: 'เกมจำลองสถานการณ์'
+      };
+      
+      const maxScore = currentGame === 'matching' ? 6 : 10;
+      const percentage = Math.round((gameState.score / maxScore) * 100);
+      
+      let emoji, message, color;
+      if (percentage >= 80) {
+        emoji = '🏆';
+        message = 'ยอดเยี่ยม!';
+        color = 'from-yellow-400 to-amber-500';
+      } else if (percentage >= 60) {
+        emoji = '⭐';
+        message = 'ดีมาก!';
+        color = 'from-green-400 to-emerald-500';
+      } else if (percentage >= 40) {
+        emoji = '💪';
+        message = 'พยายามต่อไป!';
+        color = 'from-blue-400 to-indigo-500';
+      } else {
+        emoji = '📚';
+        message = 'ลองใหม่อีกครั้ง!';
+        color = 'from-purple-400 to-pink-500';
+      }
+      
+      // Save history
+      if (allData.length < 999) {
+        const historyResult = await createRecord({
+          user_type: 'history',
+          email: currentUser.email,
+          name: currentUser.name,
+          password: '',
+          game_name: gameNames[currentGame],
+          level: gameData[currentCategory].name,
+          score: gameState.score,
+          played_at: new Date().toLocaleDateString('th-TH')
+        });
+        if (historyResult.isQueued) {
+          showToast('บันทึกคะแนนแบบออฟไลน์แล้ว ระบบจะซิงก์ให้อัตโนมัติ', 'warning');
+        }
+      }
+      
+      const content = `
+        <div class="p-8 text-center">
+          <div class="text-8xl mb-4">${emoji}</div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-2">${message}</h2>
+          <p class="text-gray-500 mb-6">${gameNames[currentGame]} - ${gameData[currentCategory].name}</p>
+          
+          <div class="bg-gradient-to-r ${color} rounded-2xl p-8 mb-8">
+            <p class="text-white text-lg mb-2">คะแนนของคุณ</p>
+            <p class="text-6xl font-bold text-white">${gameState.score}/${maxScore}</p>
+            <p class="text-white/80 mt-2">${percentage}%</p>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4">
+            <button onclick="startGame('${currentGame}')" 
+              class="py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+              🔄 เล่นอีกครั้ง
+            </button>
+            <button onclick="closeModal()" 
+              class="py-4 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors">
+              🏠 กลับหน้าหลัก
+            </button>
+          </div>
+        </div>
+      `;
+      showGameModal(content, 'result-modal');
+    }
+
+    // ==================== Event Listeners ====================
+    function initEventListeners() {
+      // Menu
+      document.getElementById('menu-btn').addEventListener('click', openMenu);
+      document.getElementById('close-menu').addEventListener('click', closeMenu);
+      document.getElementById('menu-overlay').addEventListener('click', closeMenu);
+      
+      // Menu buttons
+      document.getElementById('btn-register').addEventListener('click', showRegisterModal);
+      document.getElementById('btn-login').addEventListener('click', showLoginModal);
+      document.getElementById('btn-history').addEventListener('click', showHistoryModal);
+      document.getElementById('btn-how-to-play').addEventListener('click', showHowToPlay);
+      document.getElementById('btn-developer').addEventListener('click', showDeveloperModal);
+      document.getElementById('btn-logout').addEventListener('click', handleLogout);
+      document.getElementById('btn-admin-login').addEventListener('click', showAdminLoginModal);
+      document.getElementById('btn-admin-panel').addEventListener('click', showAdminPanel);
+      
+      // Category tabs
+      document.querySelectorAll('.category-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.category-tab').forEach(t => {
+            t.classList.remove('tab-active');
+            t.classList.add('text-gray-600');
+          });
+          tab.classList.add('tab-active');
+          tab.classList.remove('text-gray-600');
+          currentCategory = tab.dataset.category;
+          renderGames();
+        });
+      });
+    }
+
+    // ==================== Initialize ====================
+    async function init() {
+      await initElementSdk();
+      await initDataLayer();
+      initEventListeners();
+      renderGames();
+    }
+
+    init();
+  </script></body>
+</html>
