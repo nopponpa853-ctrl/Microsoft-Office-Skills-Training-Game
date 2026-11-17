@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA TECH | ร้านไอทีแห่งอนาคต</title>
+  <style>
+    /* CSS ใช้ตกแต่งสี พื้นหลัง ระยะห่าง และทำให้เว็บรองรับมือถือ */
+    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+    body{font-family:Arial,sans-serif;background:#080d1d;color:#f7f8ff;line-height:1.6}
+    header{position:sticky;top:0;z-index:5;background:#0b1224dd;backdrop-filter:blur(14px);display:flex;justify-content:space-between;align-items:center;padding:18px 8%;border-bottom:1px solid #ffffff18}
+    .logo{font-size:24px;font-weight:900;color:#72e5ff;letter-spacing:2px}nav a{color:#dce7ff;text-decoration:none;margin-left:22px}nav a:hover{color:#72e5ff}
+    .hero{min-height:570px;padding:100px 8%;display:flex;align-items:center;background:radial-gradient(circle at 80% 45%,#5736a866,transparent 35%),linear-gradient(120deg,#101b39,#080d1d)}
+    .hero div{max-width:680px}.tag{color:#72e5ff;letter-spacing:3px;font-weight:bold}
+    h1{font-size:clamp(42px,7vw,76px);line-height:1.08;margin:18px 0}
+    .shine{background:linear-gradient(90deg,#72e5ff,#b28aff,#ff85c8);background-clip:text;color:transparent}
+    p{color:#b8c4df}.hero p{font-size:18px;max-width:560px}
+    .btn{display:inline-block;margin-top:28px;padding:14px 25px;border-radius:30px;background:linear-gradient(90deg,#24c8e8,#9365ff);color:white;text-decoration:none;font-weight:bold;box-shadow:0 8px 30px #5a72ff55;transition:.25s}
+    .btn:hover{transform:translateY(-4px);box-shadow:0 12px 35px #5a72ff99}
+    section{padding:75px 8%}.heading{text-align:center;margin-bottom:35px}.heading h2{font-size:34px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:20px}
+    .card{padding:25px;border:1px solid #ffffff20;border-radius:22px;background:linear-gradient(145deg,#182545,#10182d);transition:.3s}
+    .card:hover{transform:translateY(-9px);border-color:#72e5ff;box-shadow:0 15px 35px #0007}
+    .emoji{font-size:42px}.card h3{margin:12px 0 5px}.price{color:#72e5ff;font-size:22px;font-weight:bold;margin-top:12px}
+    .table-wrap{overflow-x:auto;border:1px solid #ffffff20;border-radius:16px}
+    table{width:100%;border-collapse:collapse;min-width:450px;background:#111c35}th,td{padding:15px;text-align:left;border-bottom:1px solid #ffffff18}th{color:#72e5ff;background:#1b2a4b}
+    form{max-width:600px;margin:auto;display:grid;gap:14px;background:#111c35;padding:28px;border-radius:20px;border:1px solid #ffffff20}
+    input,textarea{width:100%;padding:13px;border:1px solid #435273;border-radius:10px;background:#091226;color:white;font:inherit}
+    button{border:0;cursor:pointer}.send{padding:14px;border-radius:12px;color:#07101e;background:linear-gradient(90deg,#72e5ff,#b28aff);font-weight:bold}
+    footer{text-align:center;padding:28px;background:#060a15;color:#8d9ab7}
+    @media(max-width:650px){header{padding:15px 5%;flex-wrap:wrap;gap:10px}nav a{margin:0 10px 0 0;font-size:14px}.hero{padding:75px 7%;min-height:480px}section{padding:55px 7%}}
+  </style>
+</head>
+<body>
+  <!-- HEADER คือส่วนหัว และ NAV คือเมนูนำทาง -->
+  <header><div class="logo">✦ NOVA TECH</div><nav><a href="#home">หน้าแรก</a><a href="#products">สินค้า</a><a href="#price">ราคา</a><a href="#contact">ติดต่อ</a></nav></header>
+
+  <main>
+    <!-- MAIN คือเนื้อหาหลัก / SECTION ใช้แบ่งเนื้อหาเป็นส่วน -->
+    <section class="hero" id="home"><div>
+      <div class="tag">TECHNOLOGY • FUTURE • YOU</div>
+      <h1>อัปเกรดโลกของคุณ<br><span class="shine">ไปอีกระดับ</span></h1>
+      <p>ค้นพบอุปกรณ์ไอทีดีไซน์ล้ำสมัย พร้อมให้ทุกไอเดียของคุณกลายเป็นความจริง</p>
+      <a class="btn" href="#products">ค้นพบสินค้า ↓</a>
+    </div></section>
+
+    <section id="products">
+      <div class="heading"><div class="tag">OUR COLLECTION</div><h2>สินค้าแนะนำ</h2><p>เลือกอุปกรณ์ที่ใช่สำหรับไลฟ์สไตล์ของคุณ</p></div>
+      <div class="cards">
+        <!-- ARTICLE ใช้แบ่งเนื้อหาแต่ละรายการ / IMG ใช้แสดงรูปภาพ -->
+        <article class="card"><div class="emoji">💻</div><h3>โน้ตบุ๊ก Pro</h3><p>ทำงานลื่นไหล ดีไซน์บางเบา</p><div class="price">฿25,900</div></article>
+        <article class="card"><div class="emoji">🎧</div><h3>หูฟังไร้สาย</h3><p>เสียงคมชัด พร้อมตัดเสียงรบกวน</p><div class="price">฿2,490</div></article>
+        <article class="card"><div class="emoji">⌨️</div><h3>คีย์บอร์ด RGB</h3><p>สัมผัสแม่นยำ พร้อมไฟสีสัน</p><div class="price">฿1,590</div></article>
+      </div>
+    </section>
+
+    <section id="price">
+      <div class="heading"><div class="tag">PRICE LIST</div><h2>ตารางราคา</h2></div>
+      <!-- TABLE แสดงข้อมูลเป็นแถว (tr) หัวตาราง (th) และช่องข้อมูล (td) -->
+      <div class="table-wrap"><table><tr><th>รหัสสินค้า</th><th>สินค้า</th><th>ราคา</th></tr>
+        <tr><td>N001</td><td>โน้ตบุ๊ก Pro</td><td>25,900 บาท</td></tr>
+        <tr><td>N002</td><td>หูฟังไร้สาย</td><td>2,490 บาท</td></tr>
+        <tr><td>N003</td><td>คีย์บอร์ด RGB</td><td>1,590 บาท</td></tr>
+      </table></div>
+    </section>
+
+    <section id="contact">
+      <div class="heading"><div class="tag">SAY HELLO</div><h2>ติดต่อเรา</h2><p>กรอกข้อมูลเพื่อให้เราติดต่อกลับ</p></div>
+      <!-- FORM รับข้อมูล / INPUT รับข้อความ / BUTTON ใช้ส่งแบบฟอร์ม -->
+      <form onsubmit="event.preventDefault();alert('ขอบคุณที่ติดต่อ NOVA TECH! (ตัวอย่างนี้ยังไม่บันทึกข้อมูล)');">
+        <label>ชื่อ-นามสกุล<input type="text" placeholder="กรอกชื่อของคุณ" required></label>
+        <label>อีเมล<input type="email" placeholder="name@email.com" required></label>
+        <label>ข้อความ<textarea rows="3" placeholder="พิมพ์ข้อความที่ต้องการสอบถาม"></textarea></label>
+        <button class="send" type="submit">ส่งข้อความ ✦</button>
+      </form>
+    </section>
+  </main>
+  <!-- FOOTER คือส่วนท้ายเว็บไซต์ -->
+  <footer>© 2026 NOVA TECH • เว็บไซต์ตัวอย่างเพื่อการเรียนรู้ HTML</footer>
+</body>
+</html>
