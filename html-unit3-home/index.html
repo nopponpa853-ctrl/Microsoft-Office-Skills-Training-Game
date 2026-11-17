@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <!-- กำหนดชุดอักขระให้รองรับภาษาไทย และปรับหน้าเว็บให้เหมาะกับมือถือ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mellow Brew | คาเฟ่เล็ก ๆ แสนอบอุ่น</title>
+
+  <style>
+    /* CSS ใช้ตกแต่งสี ตัวอักษร ระยะห่าง และการจัดวางหน้าเว็บไซต์ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "Tahoma", sans-serif;
+      color: #26352e;
+      background: #fbfaf6;
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1100px, 90%); margin: auto; }
+
+    /* ส่วนหัวเว็บไซต์และเมนูนำทาง */
+    header {
+      background: rgba(251,250,246,.95);
+      border-bottom: 1px solid #e9e5dc;
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px);
+    }
+    .nav {
+      min-height: 76px; display: flex; align-items: center;
+      justify-content: space-between; gap: 20px;
+    }
+    .logo { font-size: 1.35rem; font-weight: 800; color: #315c45; letter-spacing: .5px; }
+    .logo span { color: #c58b55; }
+    nav { display: flex; gap: 25px; flex-wrap: wrap; }
+    nav a { font-size: .95rem; color: #53645a; }
+    nav a:hover { color: #bd8150; }
+
+    /* ส่วนแนะนำร้าน (Hero) */
+    .hero {
+      min-height: 490px; display: grid; grid-template-columns: 1.05fr .95fr;
+      align-items: center; gap: 42px; padding: 65px 0;
+    }
+    .eyebrow { color: #b57a4b; font-weight: bold; letter-spacing: 2px; font-size: .8rem; }
+    h1 { font-size: clamp(2.4rem, 5vw, 4.2rem); line-height: 1.18; margin: 14px 0 20px; color: #294b39; }
+    .hero p { color: #68756c; max-width: 490px; margin-bottom: 28px; }
+    .btn {
+      display: inline-block; background: #315c45; color: white;
+      padding: 12px 23px; border-radius: 999px; font-weight: bold;
+      transition: .2s;
+    }
+    .btn:hover { background: #244633; transform: translateY(-2px); }
+    .hero img { width: 100%; height: 360px; object-fit: cover; border-radius: 28px; box-shadow: 0 18px 45px #314b3520; }
+
+    /* รูปแบบหัวข้อของแต่ละส่วน */
+    section { padding: 68px 0; }
+    .section-head { text-align: center; margin-bottom: 34px; }
+    .section-head h2 { font-size: 2rem; color: #294b39; margin-bottom: 7px; }
+    .section-head p { color: #7a857d; }
+
+    /* การ์ดเมนูสินค้า ใช้ article แบ่งข้อมูลแต่ละรายการ */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .card {
+      background: white; border: 1px solid #eeeae1; border-radius: 20px;
+      overflow: hidden; box-shadow: 0 8px 25px #26352e0a;
+    }
+    .card img { width: 100%; height: 190px; object-fit: cover; display: block; }
+    .card-content { padding: 19px; }
+    .card h3 { color: #315c45; margin-bottom: 5px; }
+    .card p { color: #778078; font-size: .92rem; min-height: 48px; }
+    .price { color: #b57a4b; font-weight: bold; margin-top: 10px; }
+
+    /* ตารางราคา ใช้ table, tr, th และ td */
+    .price-wrap { background: #f1f3ed; border-radius: 22px; padding: 28px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+    th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid #eee; }
+    th { background: #315c45; color: white; }
+    tr:last-child td { border-bottom: 0; }
+    td:last-child { text-align: right; font-weight: bold; color: #b57a4b; }
+
+    /* แบบฟอร์มติดต่อ ใช้ label และ input เพื่อรับข้อมูล */
+    .contact-box {
+      display: grid; grid-template-columns: .8fr 1.2fr; gap: 35px;
+      background: #fff; border: 1px solid #eeeae1; border-radius: 22px; padding: 32px;
+    }
+    .contact-box h2 { color: #294b39; margin-bottom: 10px; }
+    .contact-box p { color: #778078; }
+    form { display: grid; gap: 12px; }
+    label { font-weight: bold; font-size: .9rem; }
+    input, textarea {
+      width: 100%; padding: 12px 14px; border: 1px solid #dce2da;
+      border-radius: 10px; font: inherit; background: #fcfcfa;
+    }
+    input:focus, textarea:focus { outline: 2px solid #b9d0bd; border-color: #71977b; }
+    textarea { min-height: 100px; resize: vertical; }
+    button { border: 0; cursor: pointer; font: inherit; justify-self: start; }
+
+    /* ส่วนท้ายเว็บไซต์ */
+    footer { background: #294b39; color: #e8eee8; text-align: center; padding: 24px 10px; }
+    footer small { color: #c4d0c5; }
+
+    /* ปรับการแสดงผลสำหรับหน้าจอแท็บเล็ตและโทรศัพท์ */
+    @media (max-width: 760px) {
+      .nav { padding: 15px 0; flex-direction: column; }
+      nav { justify-content: center; gap: 15px; }
+      .hero, .contact-box { grid-template-columns: 1fr; }
+      .hero { padding: 45px 0; gap: 25px; }
+      .hero img { height: 260px; }
+      .cards { grid-template-columns: 1fr; }
+      section { padding: 48px 0; }
+      .price-wrap { padding: 15px; overflow-x: auto; }
+      table { min-width: 420px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER คือส่วนหัวของเว็บไซต์ และ NAV คือเมนูเชื่อมไปยังส่วนต่าง ๆ -->
+  <header>
+    <div class="container nav">
+      <a class="logo" href="#home">MELLOW<span>.</span>BREW</a>
+      <nav aria-label="เมนูหลัก">
+        <a href="#home">หน้าแรก</a>
+        <a href="#about">เกี่ยวกับร้าน</a>
+        <a href="#menu">เมนูแนะนำ</a>
+        <a href="#prices">ราคา</a>
+        <a href="#contact">ติดต่อเรา</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN คือเนื้อหาหลักของหน้าเว็บ -->
+  <main>
+    <!-- SECTION แบ่งเนื้อหาเป็นส่วน และ H1 ใช้เป็นหัวข้อหลัก -->
+    <section class="container hero" id="home">
+      <div>
+        <div class="eyebrow">A LITTLE PLACE TO SLOW DOWN</div>
+        <h1>พักสักนิด<br>แล้วจิบกาแฟดี ๆ</h1>
+        <p>ยินดีต้อนรับสู่ Mellow Brew คาเฟ่เล็ก ๆ ที่ตั้งใจเสิร์ฟกาแฟหอม ๆ และขนมอบสดใหม่ ในบรรยากาศอบอุ่นสบาย ๆ เหมาะกับทุกวันของคุณ</p>
+        <a class="btn" href="#menu">เลือกชมเมนูของเรา</a>
+      </div>
+      <!-- IMG ใช้แสดงรูปภาพ โดย SRC ระบุที่อยู่รูป และ ALT อธิบายรูปภาพ -->
+      <img src="https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1100&q=85" alt="บรรยากาศร้านกาแฟแสนอบอุ่น">
+    </section>
+
+    <!-- SECTION เกี่ยวกับร้าน ใช้ P สำหรับย่อหน้า -->
+    <section id="about" style="background:#f1f3ed;">
+      <div class="container section-head">
+        <div class="eyebrow">OUR STORY</div>
+        <h2>เรื่องราวของ Mellow Brew</h2>
+        <p>เราเชื่อว่าความสุขเล็ก ๆ เริ่มต้นได้จากเครื่องดื่มแก้วโปรด</p>
+      </div>
+      <div class="container" style="max-width:760px;text-align:center;color:#68756c;">
+        <p>ร้านกาแฟของเราคัดสรรเมล็ดกาแฟและวัตถุดิบคุณภาพดี ใส่ใจในทุกขั้นตอน ตั้งแต่การชงเครื่องดื่มจนถึงการบริการ เพื่อให้ทุกคนได้ใช้เวลาพักผ่อนอย่างมีความสุข</p>
+      </div>
+    </section>
+
+    <!-- ARTICLE ใช้จัดกลุ่มเนื้อหาที่สมบูรณ์ในตัวเอง เช่น การ์ดสินค้า -->
+    <section id="menu">
+      <div class="container section-head">
+        <div class="eyebrow">FAVORITES</div>
+        <h2>เมนูแนะนำ</h2>
+        <p>เมนูยอดนิยมที่อยากให้คุณได้ลอง</p>
+      </div>
+      <div class="container cards">
+        <article class="card">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=700&q=80" alt="กาแฟลาเต้">
+          <div class="card-content">
+            <h3>ลาเต้เย็น</h3>
+            <p>กาแฟเอสเปรสโซผสมนมสด รสนุ่มละมุน</p>
+            <div class="price">65 บาท</div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=700&q=80" alt="ชาเขียวมัทฉะ">
+          <div class="card-content">
+            <h3>มัทฉะลาเต้</h3>
+            <p>ชาเขียวมัทฉะหอมเข้มข้น ผสานนมสด</p>
+            <div class="price">75 บาท</div>
+          </div>
+        </article>
+        <article class="card">
+          <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=700&q=80" alt="ครัวซองต์อบใหม่">
+          <div class="card-content">
+            <h3>ครัวซองต์</h3>
+            <p>ขนมอบกรอบนอกนุ่มใน หอมเนยสด</p>
+            <div class="price">55 บาท</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- TABLE ใช้แสดงข้อมูลราคาอย่างเป็นระเบียบ -->
+    <section id="prices" style="background:#f1f3ed;">
+      <div class="container section-head">
+        <div class="eyebrow">MENU & PRICE</div>
+        <h2>รายการและราคา</h2>
+        <p>เลือกเมนูที่ชอบได้เลย</p>
+      </div>
+      <div class="container price-wrap">
+        <table>
+          <tr><th>รายการ</th><th style="text-align:right;">ราคา</th></tr>
+          <tr><td>เอสเปรสโซเย็น</td><td>60 บาท</td></tr>
+          <tr><td>ลาเต้เย็น</td><td>65 บาท</td></tr>
+          <tr><td>มัทฉะลาเต้</td><td>75 บาท</td></tr>
+          <tr><td>ครัวซองต์</td><td>55 บาท</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <!-- FORM ใช้รับข้อมูลจากผู้เข้าชม ตัวอย่างนี้ยังไม่ได้บันทึกลงฐานข้อมูล -->
+    <section id="contact">
+      <div class="container contact-box">
+        <div>
+          <div class="eyebrow">SAY HELLO</div>
+          <h2>ติดต่อเรา</h2>
+          <p>มีคำถามหรือข้อเสนอแนะ ฝากข้อความไว้ได้เลย</p>
+          <p style="margin-top:18px;">📍 เปิดทุกวัน 08.00–18.00 น.</p>
+          <p>☎ 02-123-4567</p>
+        </div>
+        <form id="contactForm">
+          <div>
+            <label for="fullname">ชื่อ-นามสกุล</label>
+            <input id="fullname" name="fullname" type="text" placeholder="กรอกชื่อของคุณ" required>
+          </div>
+          <div>
+            <label for="email">อีเมล</label>
+            <input id="email" name="email" type="email" placeholder="example@email.com" required>
+          </div>
+          <div>
+            <label for="message">ข้อความ</label>
+            <textarea id="message" name="message" placeholder="พิมพ์ข้อความที่ต้องการติดต่อ"></textarea>
+          </div>
+          <button class="btn" type="submit">ส่งข้อความ</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER คือส่วนท้ายเว็บไซต์ -->
+  <footer>
+    <p><strong>MELLOW BREW</strong> · เติมความสุขในทุกวัน</p>
+    <small>Copyright © 2026 Mellow Brew. All rights reserved.</small>
+  </footer>
+
+  <script>
+    // JavaScript ตัวอย่าง: แสดงข้อความเมื่อกดส่งฟอร์ม (ยังไม่เชื่อมต่อฐานข้อมูล)
+    document.getElementById("contactForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      alert("ขอบคุณสำหรับข้อความ ทางร้านได้รับข้อมูลตัวอย่างแล้ว");
+      this.reset();
+    });
+  </script>
+</body>
+</html>
